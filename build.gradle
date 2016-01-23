@@ -1,0 +1,21 @@
+buildscript {
+	dependencies {
+		classpath fileTree('lib')
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'dyvil'
+apply plugin: 'wrapper'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+
+// dyvil.version = '0.15.0'
+
+/* sourceSets {
+	main {
+		dyvil {
+			srcDir 'src/main/dyvil'
+		}
+	}
+} */
