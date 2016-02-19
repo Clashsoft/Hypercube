@@ -12,10 +12,13 @@ apply plugin: 'eclipse'
 
 // dyvil.version = '0.15.0'
 
-/* sourceSets {
+sourceSets {
 	main {
-		dyvil {
-			srcDir 'src/main/dyvil'
+		java {
+			srcDir 'src/main/java'
 		}
+		/* dyvil {
+			srcDir 'src/main/dyvil'
+		} */
 	}
-} */
+}
