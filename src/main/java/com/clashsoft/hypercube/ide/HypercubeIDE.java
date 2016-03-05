@@ -97,8 +97,42 @@ public class HypercubeIDE extends Application
 		case PAGE_DOWN:
 			this.selectPosition(this.selectedPosition.offset(Direction.UP));
 			return;
+		case DELETE:
+		case BACK_SPACE:
+			this.setInstruction(null);
+			return;
+		case N:
+			final String input = this.inputText("Enter a Number");
+			this.setInstruction(new PushInstruction(Double.valueOf(input)));
+			return;
+
+		}
+
+		switch (event.getText())
+		{
+		case "+":
+			this.setInstruction(NullaryInstructions.ADD);
+			return;
+		case "-":
+			this.setInstruction(NullaryInstructions.SUBTRACT);
+			return;
+		case "*":
+			this.setInstruction(NullaryInstructions.MULTIPLY);
+			return;
+		case "/":
+			this.setInstruction(NullaryInstructions.DIVIDE);
+			return;
 		}
 		return;
+	}
+
+	private String inputText(String s)
+	{
+		final TextInputDialog textInputDialog = new TextInputDialog();
+		textInputDialog.setHeaderText(s);
+
+		Optional<String> input = textInputDialog.showAndWait();
+		return input.orElse(null);
 	}
 
 	public void selectPosition(Position position)
