@@ -1,20 +1,27 @@
 package com.clashsoft.hypercube.ide;
 
 import com.clashsoft.hypercube.ide.grid.Grid;
+import com.clashsoft.hypercube.ide.grid.GridElement;
 import com.clashsoft.hypercube.instruction.Instruction;
 import com.clashsoft.hypercube.instruction.NullaryInstructions;
+import com.clashsoft.hypercube.instruction.PushInstruction;
 import com.clashsoft.hypercube.state.Direction;
 import com.clashsoft.hypercube.state.Position;
 import javafx.application.Application;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Box;
+import javafx.scene.shape.DrawMode;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
+
+import java.util.Optional;
 
 public class HypercubeIDE extends Application
 {
@@ -22,6 +29,7 @@ public class HypercubeIDE extends Application
 
 	private Grid              grid;
 	private PerspectiveCamera camera;
+	private Box               selectedBox;
 
 	public Parent createContent() throws Exception
 	{
@@ -35,21 +43,25 @@ public class HypercubeIDE extends Application
 		camera.setFieldOfView(40);
 		camera.setRotationAxis(new Point3D(0, 1, 0));
 
-		grid = new Grid();
+		this.selectedBox = new Box(1, 1, 1);
+		this.selectedBox.setMaterial(GridElement.SELECTED_MATERIAL);
+		this.selectedBox.setDrawMode(DrawMode.LINE);
+
+		grid = new Grid(this);
 
 		grid.getElement(selectedPosition);
 
 		// Build the Scene Graph
 		final Group root = new Group();
-		root.getChildren().addAll(grid.mainGroup, camera);
+		root.getChildren().addAll(grid.mainGroup, selectedBox, camera);
 		root.setCursor(Cursor.OPEN_HAND);
 
 		// Use a SubScene
-		final SubScene subScene = new SubScene(root, 1024, 576);
+		final SubScene subScene = new SubScene(root, 1024, 576, true, SceneAntialiasing.BALANCED);
 		subScene.setFill(Color.LIGHTBLUE);
 		subScene.setCamera(camera);
-		subScene.setDepthTest(DepthTest.ENABLE);
 		subScene.setBlendMode(BlendMode.MULTIPLY);
+		subScene.setDepthTest(DepthTest.ENABLE);
 		subScene.setOnMouseDragged(e -> {
 			if (e.getButton() == MouseButton.SECONDARY)
 			{
@@ -65,8 +77,6 @@ public class HypercubeIDE extends Application
 
 	private void keyTyped(KeyEvent event)
 	{
-		System.out.println(event.getText());
-
 		switch (event.getCode())
 		{
 		case UP:
@@ -91,14 +101,18 @@ public class HypercubeIDE extends Application
 		return;
 	}
 
-	private void selectPosition(Position position)
+	public void selectPosition(Position position)
 	{
 		this.selectedPosition = position;
-		this.grid.select(position);
+		this.grid.getElement(position);
 
 		this.camera.setTranslateX(position.x);
 		this.camera.setTranslateY(position.y);
 		this.camera.setTranslateZ(position.z);
+
+		this.selectedBox.setTranslateX(position.x);
+		this.selectedBox.setTranslateY(position.y);
+		this.selectedBox.setTranslateZ(position.z);
 	}
 
 	private void setInstruction(Instruction instruction)

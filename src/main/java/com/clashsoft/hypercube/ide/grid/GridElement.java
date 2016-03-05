@@ -4,6 +4,7 @@ import com.clashsoft.hypercube.instruction.Instruction;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
+import javafx.scene.shape.DrawMode;
 
 public class GridElement
 {
@@ -21,16 +22,6 @@ public class GridElement
 	public GridElement(Box renderBox)
 	{
 		this.renderBox = renderBox;
-	}
-
-	public void select()
-	{
-		renderBox.setMaterial(SELECTED_MATERIAL);
-	}
-
-	public void unselect()
-	{
-		this.renderBox.setMaterial(MATERIAL);
 	}
 
 	public void setInstruction(Instruction instruction)

@@ -1,5 +1,6 @@
 package com.clashsoft.hypercube.ide.grid;
 
+import com.clashsoft.hypercube.ide.HypercubeIDE;
 import com.clashsoft.hypercube.instruction.Instruction;
 import com.clashsoft.hypercube.state.Position;
 import javafx.scene.Group;
@@ -14,9 +15,11 @@ public class Grid
 {
 	public Map<Position, GridElement> gridElementMap = new HashMap<>();
 
+	private final HypercubeIDE ide;
+
 	public Group mainGroup = new Group();
 
-	private GridElement selectedElement;
+	public Grid(HypercubeIDE ide) {this.ide = ide;}
 
 	public GridElement getElement(Position position)
 	{
@@ -39,12 +42,7 @@ public class Grid
 			renderBox.setOnMouseClicked(event -> {
 				if (event.getButton() == MouseButton.PRIMARY)
 				{
-					if (this.selectedElement != null)
-					{
-						this.selectedElement.unselect();
-					}
-					this.selectedElement = gridElement;
-					gridElement.select();
+					this.ide.selectPosition(position);
 				}
 			});
 
@@ -52,18 +50,6 @@ public class Grid
 		}
 
 		return element;
-	}
-
-	public void select(Position position)
-	{
-		if (this.selectedElement != null)
-		{
-			this.selectedElement.unselect();
-		}
-
-		final GridElement element = this.getElement(position);
-		this.selectedElement = element;
-		element.select();
 	}
 
 	public void setInstruction(Position position, Instruction instruction)
