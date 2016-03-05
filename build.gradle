@@ -12,10 +12,18 @@ apply plugin: 'eclipse'
 
 // dyvil.version = '0.15.0'
 
+dependencies {
+	runtime files("src/main/resources")
+}
+
 sourceSets {
 	main {
 		java {
 			srcDir 'src/main/java'
+		}
+
+		resources {
+			srcDir 'src/main/resources'
 		}
 		/* dyvil {
 			srcDir 'src/main/dyvil'

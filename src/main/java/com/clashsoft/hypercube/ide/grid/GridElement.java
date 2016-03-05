@@ -27,5 +27,16 @@ public class GridElement
 	public void setInstruction(Instruction instruction)
 	{
 		this.instruction = instruction;
+
+		if (instruction == null)
+		{
+			this.renderBox.setMaterial(MATERIAL);
+			this.renderBox.setDrawMode(DrawMode.LINE);
+		}
+		else
+		{
+			this.renderBox.setMaterial(instruction.getMaterial());
+			this.renderBox.setDrawMode(DrawMode.FILL);
+		}
 	}
 }

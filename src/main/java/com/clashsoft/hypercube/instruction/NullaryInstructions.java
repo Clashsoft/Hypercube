@@ -1,31 +1,35 @@
 package com.clashsoft.hypercube.instruction;
 
-import com.clashsoft.hypercube.state.ExecutionException;
+import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Material;
+import javafx.scene.paint.PhongMaterial;
+
+import java.io.File;
 
 public final class NullaryInstructions
 {
-	public static Instruction ADD = state -> {
-		Object object1 = state.pop();
-		Object object2 = state.pop();
-		Object result;
+	public static Instruction ADD      = new NumberInstruction(textured("add"),
+	                                                           (n1, n2) -> n1.doubleValue() + n2.doubleValue());
+	public static Instruction SUBTRACT = new NumberInstruction(textured("subtract"),
+	                                                           (n1, n2) -> n1.doubleValue() - n2.doubleValue());
+	public static Instruction MULTIPLY = new NumberInstruction(textured("multiply"),
+	                                                           (n1, n2) -> n1.doubleValue() * n2.doubleValue());
+	public static Instruction DIVIDE   = new NumberInstruction(textured("divide"),
+	                                                           (n1, n2) -> n1.doubleValue() / n2.doubleValue());
 
-		if (object1 instanceof Number && object2 instanceof Number)
-		{
-			result = ((Number) object1).doubleValue() + ((Number) object2).doubleValue();
-		}
-		else if (object1 instanceof String || object2 instanceof String)
-		{
-			result = object1 + "" + object2;
-		}
-		else
-		{
-			throw new ExecutionException("Can't add '" + object1 + "' and '" + object2 + "'");
-		}
+	public static Material textured(String imageSource)
+	{
+		final PhongMaterial material = new PhongMaterial(Color.WHITE);
 
-		state.push(result);
-	};
-
-	public static Instruction SUBTRACT = new NumberInstruction((n1, n2) -> n1.doubleValue() - n2.doubleValue());
-	public static Instruction MULTIPLY = new NumberInstruction((n1, n2) -> n1.doubleValue() * n2.doubleValue());
-	public static Instruction DIVIDE = new NumberInstruction((n1, n2) -> n1.doubleValue() / n2.doubleValue());
+		try
+		{
+			material.setDiffuseMap(new Image("instructions" + File.separator + imageSource + ".png"));
+		}
+		catch (Exception ex)
+		{
+			throw new RuntimeException("Cannot load image: " + imageSource, ex);
+		}
+		return material;
+	}
 }
