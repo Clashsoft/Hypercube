@@ -54,7 +54,7 @@ public class ExecutionThread extends Thread implements ExecutionState
 	@Override
 	public Object pop()
 	{
-		return this.stack.pop();
+		return this.stack.pollFirst();
 	}
 
 	@Override

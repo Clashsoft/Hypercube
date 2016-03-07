@@ -71,54 +71,18 @@ public class HypercubeIDE extends Application
 
 	public Scene createContent() throws Exception
 	{
-		// Camera
-		this.camera = new PerspectiveCamera(true);
-		this.camera.getTransforms()
-		           .addAll(new Rotate(-45, Rotate.Y_AXIS), new Rotate(-20, Rotate.X_AXIS), new Translate(0, 0, -42));
-		this.camera.setNearClip(0.1);
-		this.camera.setFarClip(2000.0);
-		this.camera.setFieldOfView(40);
-		this.camera.setRotationAxis(new Point3D(0, 1, 0));
+		this.create3DScene();
 
-		this.selectedBox = new Box(1, 1, 1);
-		this.selectedBox.setMaterial(SELECTED_MATERIAL);
-		this.selectedBox.setDrawMode(DrawMode.LINE);
+		final Group ui = this.createUI();
 
-		this.executionBox = new Box(1, 1, 1);
-		this.executionBox.setMaterial(EXECUTION_MATERIAL);
-		this.executionBox.setDrawMode(DrawMode.LINE);
+		Scene scene = new Scene(new Group(this.subScene, ui));
+		this.subScene.requestFocus();
 
-		this.grid = new Grid(this);
-		this.grid.createElement(this.selectedPosition);
+		return scene;
+	}
 
-		final Box xAxis = new Box(0.0125, 0.0125, 1000);
-		xAxis.setMaterial(new PhongMaterial(Color.BLUE));
-
-		final Box yAxis = new Box(1000, 0.0125, 0.0125);
-		yAxis.setMaterial(new PhongMaterial(Color.RED));
-
-		final Box zAxis = new Box(0.0125, 1000, 0.0125);
-		zAxis.setMaterial(new PhongMaterial(Color.GREEN));
-
-		// Build the Scene Graph
-		final Group sceneGroup = new Group();
-		sceneGroup.getChildren()
-		          .addAll(this.grid.mainGroup, this.selectedBox, this.executionBox, xAxis, yAxis, zAxis, this.camera);
-		sceneGroup.setCursor(Cursor.OPEN_HAND);
-
-		// Use a SubScene
-		this.subScene = new SubScene(sceneGroup, WINDOW_WIDTH, WINDOW_HEIGHT, true, SceneAntialiasing.BALANCED);
-		this.subScene.setFill(Color.LIGHTBLUE);
-		this.subScene.setCamera(this.camera);
-		this.subScene.setBlendMode(BlendMode.MULTIPLY);
-		this.subScene.setDepthTest(DepthTest.ENABLE);
-		this.subScene.setOnMouseDragged(event -> {
-			if (event.getButton() == MouseButton.SECONDARY)
-			{
-				this.camera.setRotate(event.getX());
-			}
-		});
-
+	private Group createUI()
+	{
 		final ImageView startButton = uiButton("start");
 		startButton.setX(WINDOW_WIDTH - 140);
 		startButton.setY(20);
@@ -149,14 +113,67 @@ public class HypercubeIDE extends Application
 
 		final Group ui = new Group();
 		ui.getChildren().addAll(startButton, pauseButton, stopButton, this.console, this.instructionInfo);
+		return ui;
+	}
 
+	private void create3DScene()
+	{// Camera
+		Translate cameraTranslate = new Translate(0, 0, -42);
+		this.camera = new PerspectiveCamera(true);
+		this.camera.getTransforms()
+		           .addAll(new Rotate(-45, Rotate.Y_AXIS), new Rotate(-20, Rotate.X_AXIS), cameraTranslate);
+		this.camera.setNearClip(0.1);
+		this.camera.setFarClip(2000.0);
+		this.camera.setFieldOfView(40);
+		this.camera.setRotationAxis(new Point3D(0, 1, 0));
+
+		this.selectedBox = new Box(1, 1, 1);
+		this.selectedBox.setMaterial(SELECTED_MATERIAL);
+		this.selectedBox.setDrawMode(DrawMode.LINE);
+
+		this.executionBox = new Box(1, 1, 1);
+		this.executionBox.setMaterial(EXECUTION_MATERIAL);
+		this.executionBox.setDrawMode(DrawMode.LINE);
+
+		this.grid = new Grid(this);
+		this.grid.createElement(this.selectedPosition);
+
+		final Box xAxis = new Box(0.0125, 0.0125, 1000);
+		xAxis.setMaterial(new PhongMaterial(Color.RED));
+
+		final Box yAxis = new Box(1000, 0.0125, 0.0125);
+		yAxis.setMaterial(new PhongMaterial(Color.GREEN));
+
+		final Box zAxis = new Box(0.0125, 1000, 0.0125);
+		zAxis.setMaterial(new PhongMaterial(Color.BLUE));
+
+		// Build the Scene Graph
+		final Group sceneGroup = new Group();
+		sceneGroup.getChildren()
+		          .addAll(this.grid.mainGroup, this.selectedBox, this.executionBox, xAxis, yAxis, zAxis, this.camera);
+		sceneGroup.setCursor(Cursor.OPEN_HAND);
+
+		// Use a SubScene
+		this.subScene = new SubScene(sceneGroup, WINDOW_WIDTH, WINDOW_HEIGHT, true, SceneAntialiasing.BALANCED);
+		this.subScene.setFill(Color.LIGHTBLUE);
+		this.subScene.setCamera(this.camera);
+		this.subScene.setBlendMode(BlendMode.MULTIPLY);
+		this.subScene.setDepthTest(DepthTest.ENABLE);
+		this.subScene.setOnMouseDragged(event -> {
+			if (event.getButton() == MouseButton.SECONDARY)
+			{
+				this.camera.setRotate(event.getX());
+			}
+		});
+		this.subScene.setOnScroll(event -> {
+			final double cameraTranslateZ = cameraTranslate.getZ() + event.getDeltaY();
+			if (cameraTranslateZ < -1)
+			{
+				cameraTranslate.setZ(cameraTranslateZ);
+			}
+		});
 		this.subScene.setOnMouseClicked(event -> this.subScene.requestFocus());
 		this.subScene.setOnKeyPressed(this::keyTyped);
-
-		Scene scene = new Scene(new Group(this.subScene, ui));
-		this.subScene.requestFocus();
-
-		return scene;
 	}
 
 	private static ImageView uiButton(String texture)
