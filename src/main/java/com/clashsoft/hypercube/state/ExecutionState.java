@@ -1,30 +1,18 @@
 package com.clashsoft.hypercube.state;
 
-import java.util.Stack;
-
-public class ExecutionState
+public interface ExecutionState
 {
-	private Stack<Object> stack;
+	void push(Object value);
 
-	private Direction direction = Direction.FORWARD;
+	Object pop();
 
-	public void push(Object value)
-	{
-		this.stack.push(value);
-	}
+	Position getPosition();
 
-	public Object pop()
-	{
-		return this.stack.pop();
-	}
+	void setPosition(Position position);
 
-	public void setDirection(Direction direction)
-	{
-		this.direction = direction;
-	}
+	void setDirection(Direction direction);
 
-	public Direction getDirection()
-	{
-		return this.direction;
-	}
+	Direction getDirection();
+
+	void print(String message);
 }

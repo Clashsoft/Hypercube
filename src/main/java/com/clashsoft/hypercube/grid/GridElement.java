@@ -1,5 +1,6 @@
-package com.clashsoft.hypercube.ide.grid;
+package com.clashsoft.hypercube.grid;
 
+import com.clashsoft.hypercube.HypercubeIDE;
 import com.clashsoft.hypercube.instruction.Instruction;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
@@ -8,12 +9,11 @@ import javafx.scene.shape.DrawMode;
 
 public class GridElement
 {
-	public static final PhongMaterial MATERIAL          = new PhongMaterial(new Color(1, 1, 1, 0.25F));
-	public static final PhongMaterial SELECTED_MATERIAL = new PhongMaterial(Color.rgb(0xFF, 0xA5, 0, 0.5));
+	public static final PhongMaterial MATERIAL = new PhongMaterial(new Color(1, 1, 1, 0.25F));
 
 	static
 	{
-		SELECTED_MATERIAL.setSpecularPower(200);
+		HypercubeIDE.SELECTED_MATERIAL.setSpecularPower(200);
 	}
 
 	public final Box         renderBox;

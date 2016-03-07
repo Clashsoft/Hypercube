@@ -1,6 +1,6 @@
-package com.clashsoft.hypercube.ide.grid;
+package com.clashsoft.hypercube.grid;
 
-import com.clashsoft.hypercube.ide.HypercubeIDE;
+import com.clashsoft.hypercube.HypercubeIDE;
 import com.clashsoft.hypercube.instruction.Instruction;
 import com.clashsoft.hypercube.state.Position;
 import javafx.scene.Group;
@@ -13,15 +13,20 @@ import java.util.Map;
 
 public class Grid
 {
-	public Map<Position, GridElement> gridElementMap = new HashMap<>();
-
 	private final HypercubeIDE ide;
+
+	private Map<Position, GridElement> gridElementMap = new HashMap<>();
 
 	public Group mainGroup = new Group();
 
 	public Grid(HypercubeIDE ide) {this.ide = ide;}
 
 	public GridElement getElement(Position position)
+	{
+		return this.gridElementMap.get(position);
+	}
+
+	public GridElement createElement(Position position)
 	{
 		final GridElement element = this.gridElementMap.get(position);
 		if (element == null)
@@ -54,7 +59,7 @@ public class Grid
 
 	public void setInstruction(Position position, Instruction instruction)
 	{
-		this.getElement(position).setInstruction(instruction);
+		this.createElement(position).setInstruction(instruction);
 	}
 }
 

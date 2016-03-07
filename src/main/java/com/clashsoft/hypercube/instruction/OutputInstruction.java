@@ -4,16 +4,9 @@ import com.clashsoft.hypercube.state.ExecutionException;
 import com.clashsoft.hypercube.state.ExecutionState;
 import javafx.scene.paint.Material;
 
-public class PushInstruction implements Instruction
+public class OutputInstruction implements Instruction
 {
-	private static final Material MATERIAL = Instructions.textured("push");
-
-	private Object value;
-
-	public PushInstruction(Object value)
-	{
-		this.value = value;
-	}
+	private static final Material MATERIAL = Instructions.textured("print");
 
 	@Override
 	public Material getMaterial()
@@ -24,6 +17,6 @@ public class PushInstruction implements Instruction
 	@Override
 	public void execute(ExecutionState state) throws ExecutionException
 	{
-		state.push(this.value);
+		state.print(String.valueOf(state.pop()));
 	}
 }
