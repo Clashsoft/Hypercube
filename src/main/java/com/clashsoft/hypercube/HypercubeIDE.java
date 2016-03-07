@@ -232,6 +232,24 @@ public class HypercubeIDE extends Application
 		case I:
 			this.setInstruction(Instructions.DUP);
 			return;
+		case W:
+			this.setInstruction(Instructions.FORWARD);
+			return;
+		case S:
+			this.setInstruction(Instructions.BACKWARD);
+			return;
+		case A:
+			this.setInstruction(Instructions.LEFT);
+			return;
+		case D:
+			this.setInstruction(Instructions.RIGHT);
+			return;
+		case Q:
+			this.setInstruction(Instructions.UP);
+			return;
+		case Y:
+			this.setInstruction(Instructions.DOWN);
+			return;
 		case PLAY:
 			this.startExecution();
 			return;

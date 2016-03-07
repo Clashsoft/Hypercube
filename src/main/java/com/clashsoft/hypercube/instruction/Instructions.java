@@ -1,5 +1,6 @@
 package com.clashsoft.hypercube.instruction;
 
+import com.clashsoft.hypercube.state.Direction;
 import com.clashsoft.hypercube.state.ExecutionState;
 import com.clashsoft.hypercube.util.TextureLoader;
 import javafx.scene.paint.Material;
@@ -26,6 +27,13 @@ public final class Instructions
 		executionState.push(top);
 		executionState.push(top);
 	});
+
+	public static Instruction UP       = new DirectionInstruction("Up", textured("up"), Direction.UP);
+	public static Instruction DOWN     = new DirectionInstruction("Down", textured("down"), Direction.DOWN);
+	public static Instruction RIGHT    = new DirectionInstruction("Right", textured("right"), Direction.RIGHT);
+	public static Instruction LEFT     = new DirectionInstruction("Left", textured("left"), Direction.LEFT);
+	public static Instruction FORWARD  = new DirectionInstruction("Forward", textured("forward"), Direction.FORWARD);
+	public static Instruction BACKWARD = new DirectionInstruction("Backward", textured("backward"), Direction.BACKWARD);
 
 	protected static Material textured(String name)
 	{
