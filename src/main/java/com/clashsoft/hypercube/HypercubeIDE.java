@@ -202,10 +202,10 @@ public class HypercubeIDE extends Application
 			this.selectPosition(this.selectedPosition.offset(Direction.RIGHT));
 			return;
 		case PAGE_UP:
-			this.selectPosition(this.selectedPosition.offset(Direction.DOWN));
+			this.selectPosition(this.selectedPosition.offset(Direction.UP));
 			return;
 		case PAGE_DOWN:
-			this.selectPosition(this.selectedPosition.offset(Direction.UP));
+			this.selectPosition(this.selectedPosition.offset(Direction.DOWN));
 			return;
 		case DELETE:
 		case BACK_SPACE:

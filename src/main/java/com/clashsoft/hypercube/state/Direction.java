@@ -6,8 +6,8 @@ public enum Direction
 	BACKWARD(0, 0, 0, -1),
 	LEFT(0, -1, 0, 0),
 	RIGHT(0, 1, 0, 0),
-	UP(0, 0, 1, 0),
-	DOWN(0, 0, -1, 0),
+	UP(0, 0, -1, 0),
+	DOWN(0, 0, 1, 0),
 	NIM(1, 0, 0, 0),
 	BOR(-1, 0, 0, 0);
 
