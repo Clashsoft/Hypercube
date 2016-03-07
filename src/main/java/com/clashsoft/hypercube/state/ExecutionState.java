@@ -6,6 +6,10 @@ public interface ExecutionState
 
 	Object pop();
 
+	void store(String key, Object value);
+
+	Object load(String key);
+
 	Position getPosition();
 
 	void setPosition(Position position);

@@ -2,9 +2,7 @@ package com.clashsoft.hypercube;
 
 import com.clashsoft.hypercube.grid.Grid;
 import com.clashsoft.hypercube.grid.GridElement;
-import com.clashsoft.hypercube.instruction.Instruction;
-import com.clashsoft.hypercube.instruction.Instructions;
-import com.clashsoft.hypercube.instruction.PushInstruction;
+import com.clashsoft.hypercube.instruction.*;
 import com.clashsoft.hypercube.state.Direction;
 import com.clashsoft.hypercube.state.Position;
 import com.clashsoft.hypercube.util.TextureLoader;
@@ -218,11 +216,14 @@ public class HypercubeIDE extends Application
 			return;
 		}
 		case T:
-		{
-			final String input = this.inputText("Enter Text");
-			this.setInstruction(new PushInstruction(input));
+			this.setInstruction(new PushInstruction(this.inputText("Enter Text")));
 			return;
-		}
+		case K:
+			this.setInstruction(new StoreInstruction(this.inputText("Enter Variable Name")));
+			return;
+		case L:
+			this.setInstruction(new LoadInstruction(this.inputText("Enter Variable Name")));
+			return;
 		case O:
 			this.setInstruction(Instructions.OUTPUT);
 			return;

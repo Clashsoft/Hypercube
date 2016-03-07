@@ -10,6 +10,8 @@ import com.clashsoft.hypercube.state.Position;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ExecutionThread extends Thread implements ExecutionState
 {
@@ -22,6 +24,7 @@ public class ExecutionThread extends Thread implements ExecutionState
 
 	private Direction     direction = Direction.FORWARD;
 	private Deque<Object> stack     = new ArrayDeque<>();
+	private Map<String, Object> variables = new HashMap<>();
 	private Position      position  = new Position(0, 0, 0, 0);
 
 	public ExecutionThread(HypercubeIDE ide, Grid grid)
@@ -55,6 +58,18 @@ public class ExecutionThread extends Thread implements ExecutionState
 	public Object pop()
 	{
 		return this.stack.pollFirst();
+	}
+
+	@Override
+	public void store(String key, Object value)
+	{
+		this.variables.put(key, value);
+	}
+
+	@Override
+	public Object load(String key)
+	{
+		return this.variables.get(key);
 	}
 
 	@Override
