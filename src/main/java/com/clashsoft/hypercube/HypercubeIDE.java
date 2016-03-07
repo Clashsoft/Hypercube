@@ -185,11 +185,25 @@ public class HypercubeIDE extends Application
 			this.setInstruction(null);
 			return;
 		case N:
+		{
 			final String input = this.inputText("Enter a Number");
 			this.setInstruction(new PushInstruction(Double.valueOf(input)));
 			return;
+		}
+		case T:
+		{
+			final String input = this.inputText("Enter Text");
+			this.setInstruction(new PushInstruction(input));
+			return;
+		}
 		case O:
 			this.setInstruction(Instructions.OUTPUT);
+			return;
+		case P:
+			this.setInstruction(Instructions.POP);
+			return;
+		case I:
+			this.setInstruction(Instructions.DUP);
 			return;
 		case PLAY:
 			this.startExecution();
