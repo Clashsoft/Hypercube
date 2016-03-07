@@ -8,5 +8,7 @@ public interface Instruction
 {
 	Material getMaterial();
 
+	String getDescription();
+
 	void execute(ExecutionState state) throws ExecutionException;
 }

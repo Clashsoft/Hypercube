@@ -1,7 +1,6 @@
 package com.clashsoft.hypercube.grid;
 
 import com.clashsoft.hypercube.HypercubeIDE;
-import com.clashsoft.hypercube.instruction.Instruction;
 import com.clashsoft.hypercube.state.Position;
 import javafx.scene.Group;
 import javafx.scene.input.MouseButton;
@@ -55,11 +54,6 @@ public class Grid
 		}
 
 		return element;
-	}
-
-	public void setInstruction(Position position, Instruction instruction)
-	{
-		this.createElement(position).setInstruction(instruction);
 	}
 }
 

@@ -1,16 +1,18 @@
 package com.clashsoft.hypercube;
 
 import com.clashsoft.hypercube.grid.Grid;
-import com.clashsoft.hypercube.util.TextureLoader;
+import com.clashsoft.hypercube.grid.GridElement;
 import com.clashsoft.hypercube.instruction.Instruction;
 import com.clashsoft.hypercube.instruction.Instructions;
 import com.clashsoft.hypercube.instruction.PushInstruction;
 import com.clashsoft.hypercube.state.Direction;
 import com.clashsoft.hypercube.state.Position;
+import com.clashsoft.hypercube.util.TextureLoader;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.effect.BlendMode;
@@ -30,21 +32,23 @@ import java.util.Optional;
 
 public class HypercubeIDE extends Application
 {
-	public static final int           WINDOW_WIDTH      = 1024;
-	public static final int           WINDOW_HEIGHT     = 576;
+	public static final int WINDOW_WIDTH  = 1024;
+	public static final int WINDOW_HEIGHT = 576;
 
-	public static final PhongMaterial SELECTED_MATERIAL = new PhongMaterial(Color.rgb(0xFF, 0xA5, 0, 0.5));
+	public static final PhongMaterial SELECTED_MATERIAL  = new PhongMaterial(Color.rgb(0xFF, 0xA5, 0, 0.5));
 	public static final PhongMaterial EXECUTION_MATERIAL = new PhongMaterial(Color.rgb(0, 0xFF, 0, 0.5));
 
 	private Position selectedPosition = new Position(0, 0, 0, 0);
-	private Box selectedBox;
-	private Box executionBox;
+	private ExecutionThread executionThread;
 
 	private Grid              grid;
-	private PerspectiveCamera camera;
-	private ExecutionThread   executionThread;
-	private TextArea          console;
 	private SubScene          subScene;
+	private PerspectiveCamera camera;
+	private Box               selectedBox;
+	private Box               executionBox;
+
+	private TextArea console;
+	private Label    instructionInfo;
 
 	/**
 	 * Java main for when running without JavaFX launcher
@@ -106,30 +110,35 @@ public class HypercubeIDE extends Application
 		});
 
 		final ImageView startButton = uiButton("start");
-		startButton.setX(20);
+		startButton.setX(WINDOW_WIDTH - 140);
 		startButton.setY(20);
 		startButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, this::startExecution));
 
 		final ImageView pauseButton = uiButton("pause");
-		pauseButton.setX(60);
+		pauseButton.setX(WINDOW_WIDTH - 100);
 		pauseButton.setY(20);
 		pauseButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, this::pauseExecution));
 
 		final ImageView stopButton = uiButton("stop");
-		stopButton.setX(100);
+		stopButton.setX(WINDOW_WIDTH - 60);
 		stopButton.setY(20);
 		stopButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, this::stopExecution));
 
 		this.console = new TextArea();
-		this.console.setTranslateX(WINDOW_WIDTH - 256 - 20);
-		this.console.setTranslateY(20);
-		this.console.setMaxWidth(256);
-		this.console.setMinHeight(256);
-		this.console.setMaxHeight(WINDOW_HEIGHT - 40);
+		this.console.setTranslateX(WINDOW_WIDTH - 240 - 20);
+		this.console.setTranslateY(80);
+		this.console.setMaxWidth(240);
+
+		this.console.setMinHeight(WINDOW_HEIGHT - 100);
+		this.console.setMaxHeight(WINDOW_HEIGHT - 100);
 		this.console.setEditable(false);
 
+		this.instructionInfo = new Label("<empty>");
+		this.instructionInfo.setTranslateX(20);
+		this.instructionInfo.setTranslateY(20);
+
 		final Group ui = new Group();
-		ui.getChildren().addAll(startButton, pauseButton, stopButton, this.console);
+		ui.getChildren().addAll(startButton, pauseButton, stopButton, this.console, this.instructionInfo);
 
 		this.subScene.setOnMouseClicked(event -> this.subScene.requestFocus());
 		this.subScene.setOnKeyPressed(this::keyTyped);
@@ -179,7 +188,7 @@ public class HypercubeIDE extends Application
 			final String input = this.inputText("Enter a Number");
 			this.setInstruction(new PushInstruction(Double.valueOf(input)));
 			return;
-		case O :
+		case O:
 			this.setInstruction(Instructions.OUTPUT);
 			return;
 		case PLAY:
@@ -259,8 +268,6 @@ public class HypercubeIDE extends Application
 	public void selectPosition(Position position)
 	{
 		this.selectedPosition = position;
-		this.grid.createElement(position);
-
 		this.camera.setTranslateX(position.x);
 		this.camera.setTranslateY(position.y);
 		this.camera.setTranslateZ(position.z);
@@ -268,11 +275,32 @@ public class HypercubeIDE extends Application
 		this.selectedBox.setTranslateX(position.x);
 		this.selectedBox.setTranslateY(position.y);
 		this.selectedBox.setTranslateZ(position.z);
+
+		GridElement element = this.grid.createElement(position);
+		this.updateInstructionDesc(element);
+	}
+
+	private void updateInstructionDesc(GridElement element)
+	{
+		Instruction instruction = element.getInstruction();
+
+		if (instruction != null)
+		{
+			this.instructionInfo.setText(instruction.getDescription());
+		}
+		else
+		{
+			this.instructionInfo.setText("<empty>");
+		}
 	}
 
 	private void setInstruction(Instruction instruction)
 	{
-		this.grid.setInstruction(this.selectedPosition, instruction);
+		GridElement element = this.grid.createElement(this.selectedPosition);
+
+		element.setInstruction(instruction);
+
+		this.updateInstructionDesc(element);
 	}
 
 	public void setExecutionPosition(Position position)

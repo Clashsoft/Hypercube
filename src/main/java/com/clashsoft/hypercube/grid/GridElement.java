@@ -17,11 +17,16 @@ public class GridElement
 	}
 
 	public final Box         renderBox;
-	public       Instruction instruction;
+	private       Instruction instruction;
 
 	public GridElement(Box renderBox)
 	{
 		this.renderBox = renderBox;
+	}
+
+	public Instruction getInstruction()
+	{
+		return this.instruction;
 	}
 
 	public void setInstruction(Instruction instruction)

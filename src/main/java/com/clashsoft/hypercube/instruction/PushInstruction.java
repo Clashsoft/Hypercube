@@ -16,6 +16,12 @@ public class PushInstruction implements Instruction
 	}
 
 	@Override
+	public String getDescription()
+	{
+		return "Push " + this.value;
+	}
+
+	@Override
 	public Material getMaterial()
 	{
 		return MATERIAL;

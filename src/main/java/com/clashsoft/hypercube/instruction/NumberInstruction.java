@@ -8,13 +8,21 @@ import java.util.function.BiFunction;
 
 public class NumberInstruction implements Instruction
 {
-	private final Material material;
+	private final String                             description;
+	private final Material                           material;
 	private final BiFunction<Number, Number, Number> mapper;
 
-	public NumberInstruction(Material material, BiFunction<Number, Number, Number> mapper)
+	public NumberInstruction(String desc, Material material, BiFunction<Number, Number, Number> mapper)
 	{
+		this.description = desc;
 		this.material = material;
 		this.mapper = mapper;
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return this.description;
 	}
 
 	@Override

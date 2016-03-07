@@ -125,7 +125,7 @@ public class ExecutionThread extends Thread implements ExecutionState
 			return;
 		}
 
-		final Instruction instruction = element.instruction;
+		final Instruction instruction = element.getInstruction();
 		if (instruction != null)
 		{
 			try

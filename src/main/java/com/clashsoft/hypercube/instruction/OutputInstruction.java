@@ -9,6 +9,12 @@ public class OutputInstruction implements Instruction
 	private static final Material MATERIAL = Instructions.textured("print");
 
 	@Override
+	public String getDescription()
+	{
+		return "Output";
+	}
+
+	@Override
 	public Material getMaterial()
 	{
 		return MATERIAL;

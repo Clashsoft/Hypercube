@@ -5,13 +5,13 @@ import javafx.scene.paint.Material;
 
 public final class Instructions
 {
-	public static Instruction ADD      = new NumberInstruction(textured("add"),
+	public static Instruction ADD      = new NumberInstruction("Add", textured("add"),
 	                                                           (n1, n2) -> n1.doubleValue() + n2.doubleValue());
-	public static Instruction SUBTRACT = new NumberInstruction(textured("subtract"),
+	public static Instruction SUBTRACT = new NumberInstruction("Subtract", textured("subtract"),
 	                                                           (n1, n2) -> n1.doubleValue() - n2.doubleValue());
-	public static Instruction MULTIPLY = new NumberInstruction(textured("multiply"),
+	public static Instruction MULTIPLY = new NumberInstruction("Multiply", textured("multiply"),
 	                                                           (n1, n2) -> n1.doubleValue() * n2.doubleValue());
-	public static Instruction DIVIDE   = new NumberInstruction(textured("divide"),
+	public static Instruction DIVIDE   = new NumberInstruction("Divide", textured("divide"),
 	                                                           (n1, n2) -> n1.doubleValue() / n2.doubleValue());
 
 	public static Instruction OUTPUT = new OutputInstruction();
