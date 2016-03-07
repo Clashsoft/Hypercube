@@ -91,9 +91,19 @@ public class HypercubeIDE extends Application
 		this.grid = new Grid(this);
 		this.grid.createElement(this.selectedPosition);
 
+		final Box xAxis = new Box(0.0125, 0.0125, 1000);
+		xAxis.setMaterial(new PhongMaterial(Color.BLUE));
+
+		final Box yAxis = new Box(1000, 0.0125, 0.0125);
+		yAxis.setMaterial(new PhongMaterial(Color.RED));
+
+		final Box zAxis = new Box(0.0125, 1000, 0.0125);
+		zAxis.setMaterial(new PhongMaterial(Color.GREEN));
+
 		// Build the Scene Graph
 		final Group sceneGroup = new Group();
-		sceneGroup.getChildren().addAll(this.grid.mainGroup, this.selectedBox, this.executionBox, this.camera);
+		sceneGroup.getChildren()
+		          .addAll(this.grid.mainGroup, this.selectedBox, this.executionBox, xAxis, yAxis, zAxis, this.camera);
 		sceneGroup.setCursor(Cursor.OPEN_HAND);
 
 		// Use a SubScene
