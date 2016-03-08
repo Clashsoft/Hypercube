@@ -2,7 +2,8 @@ package com.clashsoft.hypercube;
 
 import com.clashsoft.hypercube.grid.Grid;
 import com.clashsoft.hypercube.grid.GridElement;
-import com.clashsoft.hypercube.instruction.*;
+import com.clashsoft.hypercube.input.InputManager;
+import com.clashsoft.hypercube.instruction.Instruction;
 import com.clashsoft.hypercube.state.Direction;
 import com.clashsoft.hypercube.state.Position;
 import com.clashsoft.hypercube.util.TextureLoader;
@@ -12,10 +13,8 @@ import javafx.geometry.Point3D;
 import javafx.scene.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -25,8 +24,6 @@ import javafx.scene.shape.DrawMode;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
-
-import java.util.Optional;
 
 public class HypercubeIDE extends Application
 {
@@ -38,15 +35,17 @@ public class HypercubeIDE extends Application
 
 	private Position selectedPosition = new Position(0, 0, 0, 0);
 	private ExecutionThread executionThread;
+	private InputManager    inputManager = new InputManager(this);
 
 	private Grid              grid;
 	private SubScene          subScene;
 	private PerspectiveCamera camera;
 	private Box               selectedBox;
-	private Box               executionBox;
 
+	private Box      executionBox;
 	private TextArea console;
-	private Label    instructionInfo;
+
+	private Label instructionInfo;
 
 	/**
 	 * Java main for when running without JavaFX launcher
@@ -171,7 +170,7 @@ public class HypercubeIDE extends Application
 			}
 		});
 		this.subScene.setOnMouseClicked(event -> this.subScene.requestFocus());
-		this.subScene.setOnKeyPressed(this::keyTyped);
+		this.subScene.setOnKeyPressed(this.inputManager::keyTyped);
 	}
 
 	private static ImageView uiButton(String texture)
@@ -183,105 +182,7 @@ public class HypercubeIDE extends Application
 		return startButton;
 	}
 
-	private void keyTyped(KeyEvent event)
-	{
-		switch (event.getCode())
-		{
-		case UP:
-			this.selectPosition(this.selectedPosition.offset(Direction.FORWARD));
-			return;
-		case DOWN:
-			this.selectPosition(this.selectedPosition.offset(Direction.BACKWARD));
-			return;
-		case LEFT:
-			this.selectPosition(this.selectedPosition.offset(Direction.LEFT));
-			return;
-		case RIGHT:
-			this.selectPosition(this.selectedPosition.offset(Direction.RIGHT));
-			return;
-		case PAGE_UP:
-			this.selectPosition(this.selectedPosition.offset(Direction.UP));
-			return;
-		case PAGE_DOWN:
-			this.selectPosition(this.selectedPosition.offset(Direction.DOWN));
-			return;
-		case DELETE:
-		case BACK_SPACE:
-			this.setInstruction(null);
-			return;
-		case N:
-		{
-			final String input = this.inputText("Enter a Number");
-			this.setInstruction(new PushInstruction(Double.valueOf(input)));
-			return;
-		}
-		case T:
-			this.setInstruction(new PushInstruction(this.inputText("Enter Text")));
-			return;
-		case K:
-			this.setInstruction(new StoreInstruction(this.inputText("Enter Variable Name")));
-			return;
-		case L:
-			this.setInstruction(new LoadInstruction(this.inputText("Enter Variable Name")));
-			return;
-		case O:
-			this.setInstruction(Instructions.OUTPUT);
-			return;
-		case P:
-			this.setInstruction(Instructions.POP);
-			return;
-		case I:
-			this.setInstruction(Instructions.DUP);
-			return;
-		case W:
-			this.setInstruction(Instructions.FORWARD);
-			return;
-		case S:
-			this.setInstruction(Instructions.BACKWARD);
-			return;
-		case A:
-			this.setInstruction(Instructions.LEFT);
-			return;
-		case D:
-			this.setInstruction(Instructions.RIGHT);
-			return;
-		case Q:
-			this.setInstruction(Instructions.UP);
-			return;
-		case Y:
-			this.setInstruction(Instructions.DOWN);
-			return;
-		case PLAY:
-			this.startExecution();
-			return;
-		case PAUSE:
-			this.pauseExecution();
-			return;
-		case STOP:
-			this.stopExecution();
-			return;
-		}
-
-		switch (event.getText())
-		{
-		case "+":
-			this.setInstruction(Instructions.ADD);
-			return;
-		case "-":
-			this.setInstruction(Instructions.SUBTRACT);
-			return;
-		case "*":
-			this.setInstruction(Instructions.MULTIPLY);
-			return;
-		case "/":
-			this.setInstruction(Instructions.DIVIDE);
-			return;
-		}
-
-		return;
-	}
-
-	private void startExecution()
+	public void startExecution()
 	{
 		if (this.executionThread != null)
 		{
@@ -293,7 +194,7 @@ public class HypercubeIDE extends Application
 		this.executionThread.start();
 	}
 
-	private void pauseExecution()
+	public void pauseExecution()
 	{
 		if (this.executionThread != null)
 		{
@@ -316,13 +217,9 @@ public class HypercubeIDE extends Application
 		this.setExecutionPosition(new Position(0, 0, 0, 0));
 	}
 
-	private String inputText(String s)
+	public void offsetPosition(Direction direction)
 	{
-		final TextInputDialog textInputDialog = new TextInputDialog();
-		textInputDialog.setHeaderText(s);
-
-		Optional<String> input = textInputDialog.showAndWait();
-		return input.orElse(null);
+		this.selectPosition(this.selectedPosition.offset(direction));
 	}
 
 	public void selectPosition(Position position)
@@ -354,7 +251,7 @@ public class HypercubeIDE extends Application
 		}
 	}
 
-	private void setInstruction(Instruction instruction)
+	public void setInstruction(Instruction instruction)
 	{
 		GridElement element = this.grid.createElement(this.selectedPosition);
 
