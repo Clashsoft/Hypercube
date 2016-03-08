@@ -7,6 +7,8 @@ import java.io.*;
 
 public class Project
 {
+	public static final byte FILE_VERSION = 1;
+
 	private final String name;
 
 	private final HypercubeIDE ide;
@@ -47,7 +49,7 @@ public class Project
 	{
 		try (DataInputStream dataInputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(file))))
 		{
-			this.grid.readFrom(dataInputStream);
+			this.readFrom(dataInputStream);
 
 			this.ide.loadProject(this);
 			return true;
@@ -63,7 +65,7 @@ public class Project
 	{
 		try (DataOutputStream dataOutputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file))))
 		{
-			this.grid.writeTo(dataOutputStream);
+			this.writeTo(dataOutputStream);
 			return true;
 		}
 		catch (IOException ex)
@@ -71,5 +73,23 @@ public class Project
 			ex.printStackTrace();
 			return false;
 		}
+	}
+
+	private void readFrom(DataInput dataInput) throws IOException
+	{
+		dataInput.readShort(); // File Version
+
+		this.grid.readFrom(dataInput);
+
+		this.selectedPosition = Position.readFrom(dataInput);
+	}
+
+	private void writeTo(DataOutput dataOutput) throws IOException
+	{
+		dataOutput.writeShort(FILE_VERSION);
+
+		this.grid.writeTo(dataOutput);
+
+		this.selectedPosition.writeTo(dataOutput);
 	}
 }
