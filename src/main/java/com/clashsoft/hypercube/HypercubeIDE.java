@@ -96,68 +96,74 @@ public class HypercubeIDE extends Application
 
 	private Group createUI()
 	{
-		final ImageView startButton = uiButton("start");
-		startButton.setX(WINDOW_WIDTH - 260);
-		startButton.setY(20);
-		startButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, this::startExecution));
-
-		final ImageView pauseButton = uiButton("pause");
-		pauseButton.setX(WINDOW_WIDTH - 220);
-		pauseButton.setY(20);
-		pauseButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, this::pauseExecution));
-
-		final ImageView stopButton = uiButton("stop");
-		stopButton.setX(WINDOW_WIDTH - 180);
-		stopButton.setY(20);
-		stopButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, this::stopExecution));
-
-		this.console = new TextArea();
-		this.console.setTranslateX(WINDOW_WIDTH - 260);
-		this.console.setTranslateY(80);
-		this.console.setMaxWidth(240);
-		this.console.setMinHeight(WINDOW_HEIGHT - 80 - 60);
-		this.console.setMaxHeight(WINDOW_HEIGHT - 80 - 60);
-		this.console.setEditable(false);
-
-		this.positionInfo = new Label();
-		this.positionInfo.setTranslateX(20);
-		this.positionInfo.setTranslateY(20);
-
-		this.instructionInfo = new Label();
-		this.instructionInfo.setTranslateX(20);
-		this.instructionInfo.setTranslateY(40);
-
 		final Button saveButton = new Button("Save");
 		saveButton.setTranslateX(20);
-		saveButton.setTranslateY(WINDOW_HEIGHT - 50);
+		saveButton.setTranslateY(20);
 		saveButton.setTooltip(new Tooltip("Save the current Project to disk (Shift-Click to Save As)"));
 		saveButton.setOnMouseClicked(event -> {
-			if (event.getButton() != MouseButton.PRIMARY)
+			if (event.getButton() == MouseButton.PRIMARY)
 			{
-				return;
+				this.save(event.isShiftDown());
 			}
-			if (event.isShiftDown())
-			{
-				this.saveFile = null; // Force save file dialog
-			}
-			this.save();
 		});
 
 		final Button openButton = new Button("Open");
 		openButton.setTranslateX(80);
-		openButton.setTranslateY(WINDOW_HEIGHT - 50);
+		openButton.setTranslateY(20);
 		openButton.setTooltip(new Tooltip("Open a Project from a file on disk"));
 		openButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, this::open));
 
 		final Button newButton = new Button("New");
 		newButton.setTranslateX(140);
-		newButton.setTranslateY(WINDOW_HEIGHT - 50);
+		newButton.setTranslateY(20);
 		newButton.setTooltip(new Tooltip("Create a new Project"));
 		newButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, this::newProject));
 
+		final ImageView startButton = uiButton("start");
+		startButton.setX(WINDOW_WIDTH - 250);
+		startButton.setY(20);
+		startButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, this::startExecution));
+
+		final ImageView pauseButton = uiButton("pause");
+		pauseButton.setX(WINDOW_WIDTH - 210);
+		pauseButton.setY(20);
+		pauseButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, this::pauseExecution));
+
+		final ImageView stopButton = uiButton("stop");
+		stopButton.setX(WINDOW_WIDTH - 170);
+		stopButton.setY(20);
+		stopButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, this::stopExecution));
+
+		final Button clearButton = new Button("Clear");
+		clearButton.setTranslateX(WINDOW_WIDTH - 130);
+		clearButton.setTranslateY(24);
+		clearButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, () -> this.console.setText("")));
+
+		final ToggleButton hideButton = new ToggleButton("Hide");
+		hideButton.setTranslateX(WINDOW_WIDTH - 75);
+		hideButton.setTranslateY(24);
+		hideButton.setOnAction(event -> this.console.setVisible(!hideButton.isSelected()));
+
+		this.console = new TextArea();
+		this.console.setTranslateX(WINDOW_WIDTH - 260);
+		this.console.setTranslateY(60);
+		this.console.setMaxWidth(240);
+		this.console.setMinHeight(WINDOW_HEIGHT - 60 - 20);
+		this.console.setMaxHeight(WINDOW_HEIGHT - 60 - 20);
+		this.console.setEditable(false);
+
+		this.positionInfo = new Label();
+		this.positionInfo.setTranslateX(20);
+		this.positionInfo.setTranslateY(WINDOW_HEIGHT - 60);
+
+		this.instructionInfo = new Label();
+		this.instructionInfo.setTranslateX(20);
+		this.instructionInfo.setTranslateY(WINDOW_HEIGHT - 40);
+
 		final Group ui = new Group();
-		ui.getChildren().addAll(saveButton, openButton, newButton, startButton, pauseButton, stopButton, this.console,
-		                        this.positionInfo, this.instructionInfo);
+		ui.getChildren()
+		  .addAll(saveButton, openButton, newButton, startButton, pauseButton, stopButton, clearButton, hideButton,
+		          this.console, this.positionInfo, this.instructionInfo);
 
 		ui.setOnKeyPressed(this.inputManager::uiKeyTyped);
 		return ui;
@@ -230,11 +236,6 @@ public class HypercubeIDE extends Application
 		startButton.setFitHeight(32);
 		startButton.setCursor(Cursor.HAND);
 		return startButton;
-	}
-
-	public void save()
-	{
-		this.save(false);
 	}
 
 	public void save(boolean saveAs)
