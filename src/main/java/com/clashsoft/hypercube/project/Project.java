@@ -35,6 +35,11 @@ public class Project
 		return this.grid;
 	}
 
+	public HypercubeIDE getIDE()
+	{
+		return this.ide;
+	}
+
 	public Position getSelectedPosition()
 	{
 		return this.selectedPosition;

@@ -3,6 +3,7 @@ package com.clashsoft.hypercube.project;
 import com.clashsoft.hypercube.HypercubeIDE;
 import com.clashsoft.hypercube.instruction.Instruction;
 import com.clashsoft.hypercube.state.Position;
+import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
@@ -30,6 +31,13 @@ public class GridElement
 		renderBox.setTranslateX(this.position.getDisplayX());
 		renderBox.setTranslateY(this.position.getDisplayY());
 		renderBox.setTranslateZ(this.position.getDisplayZ());
+
+		renderBox.setOnMouseClicked(event -> {
+			if (event.getButton() == MouseButton.PRIMARY)
+			{
+				grid.project.getIDE().selectPosition(position);
+			}
+		});
 
 		grid.mainGroup.getChildren().add(renderBox);
 
