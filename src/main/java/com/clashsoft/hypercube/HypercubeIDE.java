@@ -152,11 +152,13 @@ public class HypercubeIDE extends Application
 		newButton.setTranslateX(140);
 		newButton.setTranslateY(WINDOW_HEIGHT - 50);
 		newButton.setTooltip(new Tooltip("Create a new Project"));
-		newButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, this::newFile));
+		newButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, this::newProject));
 
 		final Group ui = new Group();
 		ui.getChildren().addAll(saveButton, openButton, newButton, startButton, pauseButton, stopButton, this.console,
 		                        this.positionInfo, this.instructionInfo);
+
+		ui.setOnKeyPressed(this.inputManager::uiKeyTyped);
 		return ui;
 	}
 
@@ -229,11 +231,16 @@ public class HypercubeIDE extends Application
 		return startButton;
 	}
 
-	private void save()
+	public void save()
+	{
+		this.save(false);
+	}
+
+	public void save(boolean saveAs)
 	{
 		final File target;
 
-		if (this.saveFile == null)
+		if (saveAs || this.saveFile == null)
 		{
 			final FileChooser fileChooser = new FileChooser();
 			fileChooser.setTitle("Save Project");
@@ -244,17 +251,18 @@ public class HypercubeIDE extends Application
 			{
 				return;
 			}
+
+			this.saveFile = target;
 		}
 		else
 		{
 			target = this.saveFile;
 		}
 
-		this.saveFile = target;
 		Platform.runLater(() -> this.project.writeTo(target));
 	}
 
-	private void open()
+	public void open()
 	{
 		final FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Open Project");
@@ -294,7 +302,7 @@ public class HypercubeIDE extends Application
 		}
 	}
 
-	private void newFile()
+	public void newProject()
 	{
 		this.saveFile = null;
 

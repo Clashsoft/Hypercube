@@ -17,8 +17,45 @@ public class InputManager
 		this.ide = ide;
 	}
 
+	public void uiKeyTyped(KeyEvent event)
+	{
+		switch (event.getCode())
+		{
+		case N:
+			if (event.isControlDown() || event.isMetaDown())
+			{
+				event.consume();
+				this.ide.newProject();
+				return;
+			}
+			return;
+		case O:
+			if (event.isControlDown() || event.isMetaDown())
+			{
+				event.consume();
+				this.ide.open();
+				return;
+			}
+			return;
+		case S:
+			if (event.isControlDown() || event.isMetaDown())
+			{
+				event.consume();
+				this.ide.save(event.isShiftDown());
+				return;
+			}
+			return;
+		}
+	}
+
 	public void keyTyped(KeyEvent event)
 	{
+		this.uiKeyTyped(event);
+		if (event.isConsumed())
+		{
+			return;
+		}
+
 		switch (event.getCode())
 		{
 		case UP:
@@ -52,7 +89,13 @@ public class InputManager
 		case N:
 		{
 			final String input = this.inputText("Push Number", "Enter a Number");
-			this.ide.setInstruction(new PushInstruction(Double.valueOf(input)));
+			try
+			{
+				this.ide.setInstruction(new PushInstruction(Double.valueOf(input)));
+			}
+			catch (NumberFormatException ignored)
+			{
+			}
 			return;
 		}
 		case T:
@@ -67,7 +110,7 @@ public class InputManager
 		case O:
 			this.ide.setInstruction(Instructions.OUTPUT);
 			return;
-		case R :
+		case R:
 			this.ide.setInstruction(Instructions.INPUT_TEXT);
 			return;
 		case F:
@@ -82,12 +125,6 @@ public class InputManager
 		case J:
 			this.ide.setInstruction(Instructions.COMPARE);
 			return;
-		case W:
-			this.ide.setInstruction(Instructions.FORWARD);
-			return;
-		case S:
-			this.ide.setInstruction(Instructions.BACKWARD);
-			return;
 		case A:
 			this.ide.setInstruction(Instructions.LEFT);
 			return;
@@ -99,6 +136,12 @@ public class InputManager
 			return;
 		case Y:
 			this.ide.setInstruction(Instructions.DOWN);
+			return;
+		case W:
+			this.ide.setInstruction(Instructions.FORWARD);
+			return;
+		case S:
+			this.ide.setInstruction(Instructions.BACKWARD);
 			return;
 		case PLAY:
 			this.ide.startExecution();
