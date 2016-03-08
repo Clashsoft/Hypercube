@@ -9,34 +9,28 @@ import com.clashsoft.hypercube.state.ExecutionException;
 import com.clashsoft.hypercube.state.ExecutionState;
 import com.clashsoft.hypercube.state.Position;
 
-import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
-public class ExecutionThread extends Thread implements ExecutionState
+public class ExecutionThread implements ExecutionState
 {
 	private final HypercubeIDE ide;
 	private final Grid         grid;
 
 	private volatile boolean paused;
 	private volatile boolean running;
-	private volatile long delay = 1000;
 
-	private Direction     direction = Direction.FORWARD;
-	private Deque<Object> stack     = new ArrayDeque<>();
+	private Direction           direction = Direction.FORWARD;
+	private Deque<Object>       stack     = new LinkedList<>();
 	private Map<String, Object> variables = new HashMap<>();
-	private Position      position  = new Position(0, 0, 0, 0);
+	private Position            position  = new Position(0, 0, 0, 0);
 
 	public ExecutionThread(HypercubeIDE ide, Project project)
 	{
 		this.ide = ide;
 		this.grid = project.getGrid();
-	}
-
-	public void setDelay(long delay)
-	{
-		this.delay = delay;
 	}
 
 	public void setPaused(boolean paused)
@@ -104,6 +98,11 @@ public class ExecutionThread extends Thread implements ExecutionState
 	}
 
 	@Override
+	public String readInput(String prompt)
+	{
+		return this.ide.input(prompt);
+	}
+
 	public void run()
 	{
 		this.print("Starting Execution...");
@@ -115,14 +114,6 @@ public class ExecutionThread extends Thread implements ExecutionState
 			if (!this.paused)
 			{
 				this.step();
-			}
-
-			try
-			{
-				Thread.sleep(this.delay);
-			}
-			catch (InterruptedException ignored)
-			{
 			}
 		}
 

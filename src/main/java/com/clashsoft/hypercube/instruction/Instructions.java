@@ -1,6 +1,7 @@
 package com.clashsoft.hypercube.instruction;
 
 import com.clashsoft.hypercube.state.Direction;
+import com.clashsoft.hypercube.state.ExecutionException;
 import com.clashsoft.hypercube.state.ExecutionState;
 import com.clashsoft.hypercube.util.TextureLoader;
 import javafx.scene.paint.Material;
@@ -24,7 +25,9 @@ public final class Instructions
 	private static final   byte DUP_ID  = 13;
 	protected static final byte PUSH_ID = 14;
 
-	private static final byte OUTPUT_ID = 16;
+	private static final byte OUTPUT_ID       = 16;
+	private static final byte INPUT_TEXT_ID   = 17;
+	private static final byte INPUT_NUMBER_ID = 18;
 
 	protected static final byte LOAD_VAR_ID   = 24;
 	protected static final byte STORE_VAR_ID  = 25;
@@ -49,6 +52,41 @@ public final class Instructions
 	public static Instruction OUTPUT = new BaseInstruction(OUTPUT_ID, "Output", textured("print"), //
 	                                                       executionState -> executionState.print(
 		                                                       String.valueOf(executionState.pop())));
+
+	public static Instruction INPUT_TEXT;
+
+	public static Instruction INPUT_NUMBER;
+
+	static
+	{
+		INPUT_TEXT = new BaseInstruction(INPUT_TEXT_ID, "Input Text", textured("read_text"), executionState -> {
+			final String input = executionState.readInput("Input Text");
+			if (input == null)
+			{
+				throw new ExecutionException("Text Input Cancelled");
+			}
+
+			executionState.push(input);
+		});
+
+		INPUT_NUMBER = new BaseInstruction(INPUT_NUMBER_ID, "Input Number", textured("read_num"), executionState -> {
+			final String input = executionState.readInput("Input Number");
+			if (input == null)
+			{
+				throw new ExecutionException("Number Input Cancelled");
+			}
+
+			try
+			{
+				final double inputNumber = Double.parseDouble(input);
+				executionState.push(inputNumber);
+			}
+			catch (NumberFormatException nfe)
+			{
+				throw new ExecutionException("Invalid Number Input", nfe);
+			}
+		});
+	}
 
 	public static Instruction POP = new BaseInstruction(POP_ID, "Pop", textured("pop"), ExecutionState::pop);
 
@@ -113,6 +151,10 @@ public final class Instructions
 			break;
 		case OUTPUT_ID:
 			return OUTPUT;
+		case INPUT_NUMBER_ID:
+			return INPUT_NUMBER;
+		case INPUT_TEXT_ID:
+			return INPUT_TEXT;
 		case UP_ID:
 			return UP;
 		case DOWN_ID:

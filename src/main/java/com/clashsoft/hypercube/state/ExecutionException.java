@@ -1,6 +1,6 @@
 package com.clashsoft.hypercube.state;
 
-public class ExecutionException extends Exception
+public class ExecutionException extends RuntimeException
 {
 	public ExecutionException()
 	{

@@ -67,6 +67,12 @@ public class InputManager
 		case O:
 			this.ide.setInstruction(Instructions.OUTPUT);
 			return;
+		case R :
+			this.ide.setInstruction(Instructions.INPUT_TEXT);
+			return;
+		case F:
+			this.ide.setInstruction(Instructions.INPUT_NUMBER);
+			return;
 		case P:
 			this.ide.setInstruction(Instructions.POP);
 			return;

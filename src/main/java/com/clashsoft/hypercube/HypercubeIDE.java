@@ -13,10 +13,7 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -48,7 +45,7 @@ public class HypercubeIDE extends Application
 	private Project project;
 	private File    saveFile;
 
-	private ExecutionThread executionThread;
+	private ExecutionThread executionTask;
 	private InputManager inputManager = new InputManager(this);
 
 	private Stage             primaryStage;
@@ -57,10 +54,10 @@ public class HypercubeIDE extends Application
 	private Group             gridGroup;
 	private Box               selectedBox;
 
-	private Box      executionBox;
-	private TextArea console;
-	private Label    instructionInfo;
-	private Label    positionInfo;
+	private Box       executionBox;
+	private TextArea  console;
+	private Label     instructionInfo;
+	private Label     positionInfo;
 
 	/**
 	 * Java main for when running without JavaFX launcher
@@ -99,27 +96,26 @@ public class HypercubeIDE extends Application
 	private Group createUI()
 	{
 		final ImageView startButton = uiButton("start");
-		startButton.setX(WINDOW_WIDTH - 140);
+		startButton.setX(WINDOW_WIDTH - 260);
 		startButton.setY(20);
 		startButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, this::startExecution));
 
 		final ImageView pauseButton = uiButton("pause");
-		pauseButton.setX(WINDOW_WIDTH - 100);
+		pauseButton.setX(WINDOW_WIDTH - 220);
 		pauseButton.setY(20);
 		pauseButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, this::pauseExecution));
 
 		final ImageView stopButton = uiButton("stop");
-		stopButton.setX(WINDOW_WIDTH - 60);
+		stopButton.setX(WINDOW_WIDTH - 180);
 		stopButton.setY(20);
 		stopButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, this::stopExecution));
 
 		this.console = new TextArea();
-		this.console.setTranslateX(WINDOW_WIDTH - 240 - 20);
+		this.console.setTranslateX(WINDOW_WIDTH - 260);
 		this.console.setTranslateY(80);
 		this.console.setMaxWidth(240);
-
-		this.console.setMinHeight(WINDOW_HEIGHT - 100);
-		this.console.setMaxHeight(WINDOW_HEIGHT - 100);
+		this.console.setMinHeight(WINDOW_HEIGHT - 80 - 60);
+		this.console.setMaxHeight(WINDOW_HEIGHT - 80 - 60);
 		this.console.setEditable(false);
 
 		this.positionInfo = new Label();
@@ -322,36 +318,36 @@ public class HypercubeIDE extends Application
 
 	public void startExecution()
 	{
-		if (this.executionThread != null)
+		if (this.executionTask != null)
 		{
-			this.executionThread.setPaused(false);
+			this.executionTask.setPaused(false);
 			return;
 		}
 
-		this.executionThread = new ExecutionThread(this, this.project);
-		this.executionThread.start();
+		this.executionTask = new ExecutionThread(this, this.project);
+		this.executionTask.run();
 	}
 
 	public void pauseExecution()
 	{
-		if (this.executionThread != null)
+		if (this.executionTask != null)
 		{
-			this.executionThread.setPaused(true);
+			this.executionTask.setPaused(true);
 		}
 	}
 
 	public void stopExecution()
 	{
-		if (this.executionThread != null)
+		if (this.executionTask != null)
 		{
-			this.executionThread.stopExecution();
-			this.executionThread = null;
+			this.executionTask.stopExecution();
+			this.executionTask = null;
 		}
 	}
 
 	public void onExecutionStopped()
 	{
-		this.executionThread = null;
+		this.executionTask = null;
 		this.setExecutionPosition(new Position(0, 0, 0, 0));
 	}
 
@@ -421,6 +417,11 @@ public class HypercubeIDE extends Application
 	public void output(String message)
 	{
 		this.console.setText(this.console.getText() + message + '\n');
+	}
+
+	public String input(String prompt)
+	{
+		return this.inputManager.inputText("Input", prompt);
 	}
 
 	private static EventHandler<MouseEvent> mouseHandler(MouseButton button, Runnable runnable)

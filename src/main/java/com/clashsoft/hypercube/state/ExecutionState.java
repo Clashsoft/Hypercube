@@ -19,4 +19,6 @@ public interface ExecutionState
 	Direction getDirection();
 
 	void print(String message);
+
+	String readInput(String prompt);
 }
