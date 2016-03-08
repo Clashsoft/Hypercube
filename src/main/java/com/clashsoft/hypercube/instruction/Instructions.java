@@ -18,7 +18,7 @@ public final class Instructions
 	private static final byte SUBTRACT_ID = 2;
 	private static final byte MULTIPLY_ID = 3;
 	private static final byte DIVIDE_ID   = 4;
-	private static final byte MOD_ID      = 5;
+	private static final byte MODULO_ID   = 5;
 	private static final byte COMPARE_ID  = 8;
 
 	private static final   byte POP_ID  = 12;
@@ -48,6 +48,8 @@ public final class Instructions
 	                                                           (n1, n2) -> n1.doubleValue() * n2.doubleValue());
 	public static Instruction DIVIDE   = new NumberInstruction(DIVIDE_ID, "Divide", textured("divide"),
 	                                                           (n1, n2) -> n1.doubleValue() / n2.doubleValue());
+	public static Instruction MODULO   = new NumberInstruction(MODULO_ID, "Modulo", textured("modulo"),
+	                                                           (n1, n2) -> n1.doubleValue() % n2.doubleValue());
 
 	public static Instruction OUTPUT = new BaseInstruction(OUTPUT_ID, "Output", textured("print"), //
 	                                                       executionState -> executionState.print(
@@ -140,6 +142,8 @@ public final class Instructions
 			return MULTIPLY;
 		case DIVIDE_ID:
 			return DIVIDE;
+		case MODULO_ID:
+			return MODULO;
 		case COMPARE_ID:
 			return COMPARE;
 		case POP_ID:

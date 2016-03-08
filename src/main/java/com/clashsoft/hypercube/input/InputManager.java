@@ -125,6 +125,9 @@ public class InputManager
 		case "/":
 			this.ide.setInstruction(Instructions.DIVIDE);
 			return;
+		case "%":
+			this.ide.setInstruction(Instructions.MODULO);
+			return;
 		}
 
 		return;
