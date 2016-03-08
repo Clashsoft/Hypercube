@@ -42,10 +42,14 @@ public class Grid
 		return element;
 	}
 
+	public void reset()
+	{
+		this.gridElementMap.clear();
+		this.mainGroup.getChildren().clear();
+	}
+
 	public boolean readFrom(File file)
 	{
-		this.mainGroup.getChildren().clear();
-
 		try (DataInputStream dataInputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(file))))
 		{
 			this.readFrom(dataInputStream);
@@ -62,6 +66,7 @@ public class Grid
 	{
 		final int entries = dataInput.readShort();
 
+		this.mainGroup.getChildren().clear();
 		this.gridElementMap = new HashMap<>(entries);
 
 		for (int i = 0; i < entries; i++)

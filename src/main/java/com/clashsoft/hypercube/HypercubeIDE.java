@@ -15,6 +15,7 @@ import javafx.scene.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Tooltip;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -123,16 +124,34 @@ public class HypercubeIDE extends Application
 		final Button saveButton = new Button("Save");
 		saveButton.setTranslateX(20);
 		saveButton.setTranslateY(WINDOW_HEIGHT - 50);
-		saveButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, this::save));
+		saveButton.setTooltip(new Tooltip("Save the current Project to disk (Shift-Click to Save As)"));
+		saveButton.setOnMouseClicked(event -> {
+			if (event.getButton() != MouseButton.PRIMARY)
+			{
+				return;
+			}
+			if (event.isShiftDown())
+			{
+				this.saveFile = null; // Force save file dialog
+			}
+			this.save();
+		});
 
 		final Button openButton = new Button("Open");
 		openButton.setTranslateX(80);
 		openButton.setTranslateY(WINDOW_HEIGHT - 50);
+		openButton.setTooltip(new Tooltip("Open a Project from a file on disk"));
 		openButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, this::open));
 
+		final Button newButton = new Button("New");
+		newButton.setTranslateX(140);
+		newButton.setTranslateY(WINDOW_HEIGHT - 50);
+		newButton.setTooltip(new Tooltip("Create a new Project"));
+		newButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, this::newFile));
+
 		final Group ui = new Group();
-		ui.getChildren()
-		  .addAll(saveButton, openButton, startButton, pauseButton, stopButton, this.console, this.instructionInfo);
+		ui.getChildren().addAll(saveButton, openButton, newButton, startButton, pauseButton, stopButton, this.console,
+		                        this.instructionInfo);
 		return ui;
 	}
 
@@ -255,6 +274,13 @@ public class HypercubeIDE extends Application
 
 		this.saveFile = target;
 		Platform.runLater(() -> this.grid.readFrom(target));
+	}
+
+	private void newFile()
+	{
+		this.saveFile = null;
+
+		this.grid.reset();
 	}
 
 	public void startExecution()
