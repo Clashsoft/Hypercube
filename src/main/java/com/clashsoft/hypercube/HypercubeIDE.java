@@ -8,9 +8,11 @@ import com.clashsoft.hypercube.state.Direction;
 import com.clashsoft.hypercube.state.Position;
 import com.clashsoft.hypercube.util.TextureLoader;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.effect.BlendMode;
@@ -23,7 +25,10 @@ import javafx.scene.shape.Box;
 import javafx.scene.shape.DrawMode;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
+import java.io.File;
 
 public class HypercubeIDE extends Application
 {
@@ -33,10 +38,14 @@ public class HypercubeIDE extends Application
 	public static final PhongMaterial SELECTED_MATERIAL  = new PhongMaterial(Color.rgb(0xFF, 0xA5, 0, 0.5));
 	public static final PhongMaterial EXECUTION_MATERIAL = new PhongMaterial(Color.rgb(0, 0xFF, 0, 0.5));
 
+	public static final FileChooser.ExtensionFilter EXTENSION_FILTER = new FileChooser.ExtensionFilter("Hypercube Files",
+	                                                                                                   "*.hyc");
+
 	private Position selectedPosition = new Position(0, 0, 0, 0);
 	private ExecutionThread executionThread;
-	private InputManager    inputManager = new InputManager(this);
+	private InputManager inputManager = new InputManager(this);
 
+	private Stage             primaryStage;
 	private Grid              grid;
 	private SubScene          subScene;
 	private PerspectiveCamera camera;
@@ -44,8 +53,9 @@ public class HypercubeIDE extends Application
 
 	private Box      executionBox;
 	private TextArea console;
+	private Label    instructionInfo;
 
-	private Label instructionInfo;
+	private File saveFile;
 
 	/**
 	 * Java main for when running without JavaFX launcher
@@ -58,6 +68,8 @@ public class HypercubeIDE extends Application
 	@Override
 	public void start(Stage primaryStage) throws Exception
 	{
+		this.primaryStage = primaryStage;
+
 		primaryStage.setResizable(false);
 
 		primaryStage.setScene(this.createContent());
@@ -108,13 +120,25 @@ public class HypercubeIDE extends Application
 		this.instructionInfo.setTranslateX(20);
 		this.instructionInfo.setTranslateY(20);
 
+		final Button saveButton = new Button("Save");
+		saveButton.setTranslateX(20);
+		saveButton.setTranslateY(WINDOW_HEIGHT - 50);
+		saveButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, this::save));
+
+		final Button openButton = new Button("Open");
+		openButton.setTranslateX(80);
+		openButton.setTranslateY(WINDOW_HEIGHT - 50);
+		openButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, this::open));
+
 		final Group ui = new Group();
-		ui.getChildren().addAll(startButton, pauseButton, stopButton, this.console, this.instructionInfo);
+		ui.getChildren()
+		  .addAll(saveButton, openButton, startButton, pauseButton, stopButton, this.console, this.instructionInfo);
 		return ui;
 	}
 
 	private void create3DScene()
-	{// Camera
+	{
+		// Camera
 		Translate cameraTranslate = new Translate(0, 0, -42);
 		this.camera = new PerspectiveCamera(true);
 		this.camera.getTransforms()
@@ -180,6 +204,57 @@ public class HypercubeIDE extends Application
 		startButton.setFitHeight(32);
 		startButton.setCursor(Cursor.HAND);
 		return startButton;
+	}
+
+	private void save()
+	{
+		final File target;
+
+		if (this.saveFile == null)
+		{
+			final FileChooser fileChooser = new FileChooser();
+			fileChooser.setInitialFileName("project.hyc");
+			fileChooser.getExtensionFilters().add(EXTENSION_FILTER);
+			fileChooser.setTitle("Save File");
+
+			File dialogTarget = fileChooser.showSaveDialog(this.primaryStage);
+
+			if (dialogTarget == null)
+			{
+				return;
+			}
+			if (dialogTarget.isDirectory())
+			{
+				dialogTarget = new File(dialogTarget, "project.hyc");
+			}
+
+			target = dialogTarget;
+		}
+		else
+		{
+			target = this.saveFile;
+		}
+
+		this.saveFile = target;
+		Platform.runLater(() -> this.grid.writeTo(target));
+	}
+
+	private void open()
+	{
+		final FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Open File");
+		fileChooser.setInitialFileName("project.hyc");
+		fileChooser.getExtensionFilters().add(EXTENSION_FILTER);
+
+		final File target = fileChooser.showOpenDialog(this.primaryStage);
+
+		if (target == null)
+		{
+			return;
+		}
+
+		this.saveFile = target;
+		Platform.runLater(() -> this.grid.readFrom(target));
 	}
 
 	public void startExecution()

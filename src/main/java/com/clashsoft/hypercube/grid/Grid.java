@@ -1,24 +1,27 @@
 package com.clashsoft.hypercube.grid;
 
 import com.clashsoft.hypercube.HypercubeIDE;
+import com.clashsoft.hypercube.instruction.Instruction;
+import com.clashsoft.hypercube.instruction.Instructions;
 import com.clashsoft.hypercube.state.Position;
 import javafx.scene.Group;
-import javafx.scene.input.MouseButton;
-import javafx.scene.shape.Box;
-import javafx.scene.shape.DrawMode;
 
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Grid
 {
-	private final HypercubeIDE ide;
+	protected transient final HypercubeIDE ide;
 
 	private Map<Position, GridElement> gridElementMap = new HashMap<>();
 
-	public Group mainGroup = new Group();
+	public transient Group mainGroup = new Group();
 
-	public Grid(HypercubeIDE ide) {this.ide = ide;}
+	public Grid(HypercubeIDE ide)
+	{
+		this.ide = ide;
+	}
 
 	public GridElement getElement(Position position)
 	{
@@ -30,30 +33,73 @@ public class Grid
 		final GridElement element = this.gridElementMap.get(position);
 		if (element == null)
 		{
-			final Box renderBox = new Box(1, 1, 1);
-			renderBox.setTranslateX(position.x);
-			renderBox.setTranslateY(position.y);
-			renderBox.setTranslateZ(position.z);
-
-			renderBox.setMaterial(GridElement.MATERIAL);
-			renderBox.setDrawMode(DrawMode.LINE);
-
-			this.mainGroup.getChildren().add(renderBox);
-
-			final GridElement gridElement = new GridElement(renderBox);
+			final GridElement gridElement = new GridElement(this, position, null);
 			this.gridElementMap.put(position, gridElement);
-
-			renderBox.setOnMouseClicked(event -> {
-				if (event.getButton() == MouseButton.PRIMARY)
-				{
-					this.ide.selectPosition(position);
-				}
-			});
 
 			return gridElement;
 		}
 
 		return element;
+	}
+
+	public boolean readFrom(File file)
+	{
+		this.mainGroup.getChildren().clear();
+
+		try (DataInputStream dataInputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(file))))
+		{
+			this.readFrom(dataInputStream);
+			return true;
+		}
+		catch (IOException ex)
+		{
+			ex.printStackTrace();
+			return false;
+		}
+	}
+
+	public void readFrom(DataInput dataInput) throws IOException
+	{
+		final int entries = dataInput.readShort();
+
+		this.gridElementMap = new HashMap<>(entries);
+
+		for (int i = 0; i < entries; i++)
+		{
+			final Position position = Position.readFrom(dataInput);
+			final Instruction instruction = Instructions.readFrom(dataInput);
+
+			final GridElement gridElement = new GridElement(this, position, instruction);
+			this.gridElementMap.put(position, gridElement);
+		}
+	}
+
+	public boolean writeTo(File file)
+	{
+		try (DataOutputStream dataOutputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file))))
+		{
+			this.writeTo(dataOutputStream);
+			return true;
+		}
+		catch (IOException ex)
+		{
+			ex.printStackTrace();
+			return false;
+		}
+	}
+
+	public void writeTo(DataOutput dataOutput) throws IOException
+	{
+		dataOutput.writeShort(this.gridElementMap.size());
+
+		for (Map.Entry<Position, GridElement> entry : this.gridElementMap.entrySet())
+		{
+			final Position position = entry.getKey();
+			final GridElement gridElement = entry.getValue();
+
+			position.writeTo(dataOutput);
+			Instructions.writeTo(gridElement.getInstruction(), dataOutput);
+		}
 	}
 }
 

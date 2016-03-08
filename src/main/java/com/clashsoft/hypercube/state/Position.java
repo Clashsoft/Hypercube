@@ -1,5 +1,9 @@
 package com.clashsoft.hypercube.state;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+
 public class Position
 {
 	public final int w;
@@ -23,6 +27,19 @@ public class Position
 	public Position offset(int w, int x, int y, int z)
 	{
 		return new Position(this.w + w, this.x + x, this.y + y, this.z + z);
+	}
+
+	public static Position readFrom(DataInput dataInput) throws IOException
+	{
+		return new Position(dataInput.readInt(), dataInput.readInt(), dataInput.readInt(), dataInput.readInt());
+	}
+
+	public void writeTo(DataOutput dataOutput) throws IOException
+	{
+		dataOutput.writeInt(this.w);
+		dataOutput.writeInt(this.x);
+		dataOutput.writeInt(this.y);
+		dataOutput.writeInt(this.z);
 	}
 
 	@Override
@@ -50,5 +67,11 @@ public class Position
 		result = 31 * result + y;
 		result = 31 * result + z;
 		return result;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "Position(" + "w: " + this.w + ", x: " + this.x + ", y: " + this.y + ", z: " + this.z + ')';
 	}
 }

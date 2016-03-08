@@ -2,6 +2,8 @@ package com.clashsoft.hypercube.grid;
 
 import com.clashsoft.hypercube.HypercubeIDE;
 import com.clashsoft.hypercube.instruction.Instruction;
+import com.clashsoft.hypercube.state.Position;
+import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
@@ -16,12 +18,31 @@ public class GridElement
 		HypercubeIDE.SELECTED_MATERIAL.setSpecularPower(200);
 	}
 
-	public final Box         renderBox;
-	private       Instruction instruction;
+	public final    Position    position;
+	protected final Box         renderBox;
+	private         Instruction instruction;
 
-	public GridElement(Box renderBox)
+	protected GridElement(Grid grid, Position position, Instruction instruction)
 	{
+		this.position = position;
+
+		final Box renderBox = new Box(1, 1, 1);
+		renderBox.setTranslateX(this.position.x);
+		renderBox.setTranslateY(this.position.y);
+		renderBox.setTranslateZ(this.position.z);
+
+		grid.mainGroup.getChildren().add(renderBox);
+
+		renderBox.setOnMouseClicked(event -> {
+			if (event.getButton() == MouseButton.PRIMARY)
+			{
+				grid.ide.selectPosition(position);
+			}
+		});
+
 		this.renderBox = renderBox;
+
+		this.setInstruction(instruction);
 	}
 
 	public Instruction getInstruction()

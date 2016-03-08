@@ -4,19 +4,40 @@ import com.clashsoft.hypercube.state.ExecutionException;
 import com.clashsoft.hypercube.state.ExecutionState;
 import javafx.scene.paint.Material;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
 import java.util.function.BiFunction;
 
-public class NumberInstruction implements Instruction
+public final class NumberInstruction implements Instruction
 {
+	private final byte                               id;
 	private final String                             description;
 	private final Material                           material;
 	private final BiFunction<Number, Number, Number> mapper;
 
-	public NumberInstruction(String desc, Material material, BiFunction<Number, Number, Number> mapper)
+	public NumberInstruction(byte id, String desc, Material material, BiFunction<Number, Number, Number> mapper)
 	{
+		this.id = id;
 		this.description = desc;
 		this.material = material;
 		this.mapper = mapper;
+	}
+
+	@Override
+	public byte getID()
+	{
+		return this.id;
+	}
+
+	@Override
+	public void writeData(DataOutput dataOutput) throws IOException
+	{
+	}
+
+	@Override
+	public void readData(DataInput dataInput) throws IOException
+	{
 	}
 
 	@Override
