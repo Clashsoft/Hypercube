@@ -1,8 +1,9 @@
 package com.clashsoft.hypercube;
 
-import com.clashsoft.hypercube.grid.Grid;
-import com.clashsoft.hypercube.grid.GridElement;
 import com.clashsoft.hypercube.instruction.Instruction;
+import com.clashsoft.hypercube.project.Grid;
+import com.clashsoft.hypercube.project.GridElement;
+import com.clashsoft.hypercube.project.Project;
 import com.clashsoft.hypercube.state.Direction;
 import com.clashsoft.hypercube.state.ExecutionException;
 import com.clashsoft.hypercube.state.ExecutionState;
@@ -27,10 +28,10 @@ public class ExecutionThread extends Thread implements ExecutionState
 	private Map<String, Object> variables = new HashMap<>();
 	private Position      position  = new Position(0, 0, 0, 0);
 
-	public ExecutionThread(HypercubeIDE ide, Grid grid)
+	public ExecutionThread(HypercubeIDE ide, Project project)
 	{
 		this.ide = ide;
-		this.grid = grid;
+		this.grid = project.getGrid();
 	}
 
 	public void setDelay(long delay)

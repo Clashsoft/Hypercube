@@ -45,18 +45,18 @@ public class InputManager
 			return;
 		case N:
 		{
-			final String input = this.inputText("Enter a Number");
+			final String input = this.inputText("Push Number", "Enter a Number");
 			this.ide.setInstruction(new PushInstruction(Double.valueOf(input)));
 			return;
 		}
 		case T:
-			this.ide.setInstruction(new PushInstruction(this.inputText("Enter Text")));
+			this.ide.setInstruction(new PushInstruction(this.inputText("Push Text", "Enter Text")));
 			return;
 		case K:
-			this.ide.setInstruction(new StoreInstruction(this.inputText("Enter Variable Name")));
+			this.ide.setInstruction(new StoreInstruction(this.inputText("Store Variable", "Enter Variable Name")));
 			return;
 		case L:
-			this.ide.setInstruction(new LoadInstruction(this.inputText("Enter Variable Name")));
+			this.ide.setInstruction(new LoadInstruction(this.inputText("Load Variable", "Enter Variable Name")));
 			return;
 		case O:
 			this.ide.setInstruction(Instructions.OUTPUT);
@@ -67,7 +67,7 @@ public class InputManager
 		case I:
 			this.ide.setInstruction(Instructions.DUP);
 			return;
-		case J :
+		case J:
 			this.ide.setInstruction(Instructions.COMPARE);
 			return;
 		case W:
@@ -118,10 +118,11 @@ public class InputManager
 		return;
 	}
 
-	private String inputText(String s)
+	public String inputText(String title, String info)
 	{
 		final TextInputDialog textInputDialog = new TextInputDialog();
-		textInputDialog.setHeaderText(s);
+		textInputDialog.setTitle(title);
+		textInputDialog.setHeaderText(info);
 
 		Optional<String> input = textInputDialog.showAndWait();
 		return input.orElse(null);

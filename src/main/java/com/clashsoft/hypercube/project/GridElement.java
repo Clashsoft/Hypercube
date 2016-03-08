@@ -1,9 +1,8 @@
-package com.clashsoft.hypercube.grid;
+package com.clashsoft.hypercube.project;
 
 import com.clashsoft.hypercube.HypercubeIDE;
 import com.clashsoft.hypercube.instruction.Instruction;
 import com.clashsoft.hypercube.state.Position;
-import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
@@ -33,13 +32,6 @@ public class GridElement
 
 		grid.mainGroup.getChildren().add(renderBox);
 
-		renderBox.setOnMouseClicked(event -> {
-			if (event.getButton() == MouseButton.PRIMARY)
-			{
-				grid.ide.selectPosition(position);
-			}
-		});
-
 		this.renderBox = renderBox;
 
 		this.setInstruction(instruction);
@@ -64,5 +56,10 @@ public class GridElement
 			this.renderBox.setMaterial(instruction.getMaterial());
 			this.renderBox.setDrawMode(DrawMode.FILL);
 		}
+	}
+
+	public Box getRenderBox()
+	{
+		return this.renderBox;
 	}
 }

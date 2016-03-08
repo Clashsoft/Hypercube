@@ -1,14 +1,15 @@
 package com.clashsoft.hypercube;
 
-import com.clashsoft.hypercube.grid.Grid;
-import com.clashsoft.hypercube.grid.GridElement;
 import com.clashsoft.hypercube.input.InputManager;
 import com.clashsoft.hypercube.instruction.Instruction;
+import com.clashsoft.hypercube.project.GridElement;
+import com.clashsoft.hypercube.project.Project;
 import com.clashsoft.hypercube.state.Direction;
 import com.clashsoft.hypercube.state.Position;
 import com.clashsoft.hypercube.util.TextureLoader;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
@@ -27,6 +28,7 @@ import javafx.scene.shape.DrawMode;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -39,24 +41,25 @@ public class HypercubeIDE extends Application
 	public static final PhongMaterial SELECTED_MATERIAL  = new PhongMaterial(Color.rgb(0xFF, 0xA5, 0, 0.5));
 	public static final PhongMaterial EXECUTION_MATERIAL = new PhongMaterial(Color.rgb(0, 0xFF, 0, 0.5));
 
-	public static final FileChooser.ExtensionFilter EXTENSION_FILTER = new FileChooser.ExtensionFilter("Hypercube Files",
-	                                                                                                   "*.hyc");
+	public static final String          FILE_EXTENSION   = ".hcp";
+	public static final ExtensionFilter EXTENSION_FILTER = new ExtensionFilter("Hypercube Project Files (*"
+		                                                                           + FILE_EXTENSION + ")", "*" + FILE_EXTENSION);
 
-	private Position selectedPosition = new Position(0, 0, 0, 0);
+	private Project project;
+	private File    saveFile;
+
 	private ExecutionThread executionThread;
 	private InputManager inputManager = new InputManager(this);
 
 	private Stage             primaryStage;
-	private Grid              grid;
 	private SubScene          subScene;
 	private PerspectiveCamera camera;
+	private Group             gridGroup;
 	private Box               selectedBox;
 
 	private Box      executionBox;
 	private TextArea console;
 	private Label    instructionInfo;
-
-	private File saveFile;
 
 	/**
 	 * Java main for when running without JavaFX launcher
@@ -74,7 +77,8 @@ public class HypercubeIDE extends Application
 		primaryStage.setResizable(false);
 
 		primaryStage.setScene(this.createContent());
-		primaryStage.setTitle("Hypercube");
+
+		this.setProject(new Project(this, "New Project"));
 
 		primaryStage.show();
 	}
@@ -175,9 +179,6 @@ public class HypercubeIDE extends Application
 		this.executionBox.setMaterial(EXECUTION_MATERIAL);
 		this.executionBox.setDrawMode(DrawMode.LINE);
 
-		this.grid = new Grid(this);
-		this.grid.createElement(this.selectedPosition);
-
 		final Box xAxis = new Box(0.0125, 0.0125, 1000);
 		xAxis.setMaterial(new PhongMaterial(Color.RED));
 
@@ -187,10 +188,12 @@ public class HypercubeIDE extends Application
 		final Box zAxis = new Box(0.0125, 1000, 0.0125);
 		zAxis.setMaterial(new PhongMaterial(Color.BLUE));
 
+		this.gridGroup = new Group();
+
 		// Build the Scene Graph
 		final Group sceneGroup = new Group();
 		sceneGroup.getChildren()
-		          .addAll(this.grid.mainGroup, this.selectedBox, this.executionBox, xAxis, yAxis, zAxis, this.camera);
+		          .addAll(this.gridGroup, this.selectedBox, this.executionBox, xAxis, yAxis, zAxis, this.camera);
 		sceneGroup.setCursor(Cursor.OPEN_HAND);
 
 		// Use a SubScene
@@ -232,22 +235,14 @@ public class HypercubeIDE extends Application
 		if (this.saveFile == null)
 		{
 			final FileChooser fileChooser = new FileChooser();
-			fileChooser.setInitialFileName("project.hyc");
-			fileChooser.getExtensionFilters().add(EXTENSION_FILTER);
-			fileChooser.setTitle("Save File");
+			fileChooser.setTitle("Save Project");
+			this.setupFileChooser(fileChooser);
 
-			File dialogTarget = fileChooser.showSaveDialog(this.primaryStage);
-
-			if (dialogTarget == null)
+			target = fileChooser.showSaveDialog(this.primaryStage);
+			if (target == null)
 			{
 				return;
 			}
-			if (dialogTarget.isDirectory())
-			{
-				dialogTarget = new File(dialogTarget, "project.hyc");
-			}
-
-			target = dialogTarget;
 		}
 		else
 		{
@@ -255,15 +250,15 @@ public class HypercubeIDE extends Application
 		}
 
 		this.saveFile = target;
-		Platform.runLater(() -> this.grid.writeTo(target));
+		Platform.runLater(() -> this.project.writeTo(target));
 	}
 
 	private void open()
 	{
 		final FileChooser fileChooser = new FileChooser();
-		fileChooser.setTitle("Open File");
-		fileChooser.setInitialFileName("project.hyc");
-		fileChooser.getExtensionFilters().add(EXTENSION_FILTER);
+		fileChooser.setTitle("Open Project");
+
+		this.setupFileChooser(fileChooser);
 
 		final File target = fileChooser.showOpenDialog(this.primaryStage);
 
@@ -273,14 +268,51 @@ public class HypercubeIDE extends Application
 		}
 
 		this.saveFile = target;
-		Platform.runLater(() -> this.grid.readFrom(target));
+		String targetName = target.getName();
+		if (targetName.endsWith(FILE_EXTENSION))
+		{
+			targetName = targetName.substring(0, targetName.length() - FILE_EXTENSION.length());
+		}
+
+		this.setProject(new Project(this, targetName));
+		Platform.runLater(() -> this.project.readFrom(target));
+	}
+
+	private void setupFileChooser(FileChooser fileChooser)
+	{
+		fileChooser.getExtensionFilters().add(EXTENSION_FILTER);
+
+		if (this.saveFile == null)
+		{
+			fileChooser.setInitialFileName(this.project.getName() + FILE_EXTENSION);
+		}
+		else
+		{
+			fileChooser.setInitialFileName(this.saveFile.getName());
+			fileChooser.setInitialDirectory(this.saveFile.getParentFile());
+		}
 	}
 
 	private void newFile()
 	{
 		this.saveFile = null;
 
-		this.grid.reset();
+		final String name = this.inputManager.inputText("New Project", "Enter Project Name");
+		if (name == null) // Clicked Cancel
+		{
+			return;
+		}
+
+		final Project project = new Project(this, name);
+		this.setProject(project);
+	}
+
+	public void setProject(Project project)
+	{
+		this.project = project;
+		this.primaryStage.setTitle(project.getName() + " - Hypercube IDE");
+
+		this.loadProject(project);
 	}
 
 	public void startExecution()
@@ -291,7 +323,7 @@ public class HypercubeIDE extends Application
 			return;
 		}
 
-		this.executionThread = new ExecutionThread(this, this.grid);
+		this.executionThread = new ExecutionThread(this, this.project);
 		this.executionThread.start();
 	}
 
@@ -318,14 +350,24 @@ public class HypercubeIDE extends Application
 		this.setExecutionPosition(new Position(0, 0, 0, 0));
 	}
 
+	public void setInstruction(Instruction instruction)
+	{
+		final GridElement element = this.project.getGrid().createElement(this.project.getSelectedPosition());
+		element.setInstruction(instruction);
+		this.updateInstructionDesc(element);
+	}
+
 	public void offsetPosition(Direction direction)
 	{
-		this.selectPosition(this.selectedPosition.offset(direction));
+		this.selectPosition(this.project.getSelectedPosition().offset(direction));
 	}
 
 	public void selectPosition(Position position)
 	{
-		this.selectedPosition = position;
+		this.project.setSelectedPosition(position);
+
+		final GridElement element = this.project.getGrid().createElement(position);
+
 		this.camera.setTranslateX(position.x);
 		this.camera.setTranslateY(position.y);
 		this.camera.setTranslateZ(position.z);
@@ -334,11 +376,10 @@ public class HypercubeIDE extends Application
 		this.selectedBox.setTranslateY(position.y);
 		this.selectedBox.setTranslateZ(position.z);
 
-		GridElement element = this.grid.createElement(position);
 		this.updateInstructionDesc(element);
 	}
 
-	private void updateInstructionDesc(GridElement element)
+	public void updateInstructionDesc(GridElement element)
 	{
 		Instruction instruction = element.getInstruction();
 
@@ -352,20 +393,20 @@ public class HypercubeIDE extends Application
 		}
 	}
 
-	public void setInstruction(Instruction instruction)
-	{
-		GridElement element = this.grid.createElement(this.selectedPosition);
-
-		element.setInstruction(instruction);
-
-		this.updateInstructionDesc(element);
-	}
-
 	public void setExecutionPosition(Position position)
 	{
 		this.executionBox.setTranslateX(position.x);
 		this.executionBox.setTranslateY(position.y);
 		this.executionBox.setTranslateZ(position.z);
+	}
+
+	public void loadProject(Project project)
+	{
+		this.selectPosition(project.getSelectedPosition());
+
+		ObservableList<Node> children = this.gridGroup.getChildren();
+		children.clear();
+		children.add(project.getGrid().mainGroup);
 	}
 
 	public void output(String message)

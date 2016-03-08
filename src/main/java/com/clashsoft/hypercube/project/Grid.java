@@ -1,26 +1,26 @@
-package com.clashsoft.hypercube.grid;
+package com.clashsoft.hypercube.project;
 
-import com.clashsoft.hypercube.HypercubeIDE;
 import com.clashsoft.hypercube.instruction.Instruction;
 import com.clashsoft.hypercube.instruction.Instructions;
 import com.clashsoft.hypercube.state.Position;
 import javafx.scene.Group;
 
 import java.io.*;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Grid
 {
-	protected transient final HypercubeIDE ide;
+	protected final Project project;
 
 	private Map<Position, GridElement> gridElementMap = new HashMap<>();
 
 	public transient Group mainGroup = new Group();
 
-	public Grid(HypercubeIDE ide)
+	public Grid(Project project)
 	{
-		this.ide = ide;
+		this.project = project;
 	}
 
 	public GridElement getElement(Position position)
@@ -42,31 +42,20 @@ public class Grid
 		return element;
 	}
 
+	public Collection<GridElement> getElements()
+	{
+		return this.gridElementMap.values();
+	}
+
 	public void reset()
 	{
 		this.gridElementMap.clear();
-		this.mainGroup.getChildren().clear();
-	}
-
-	public boolean readFrom(File file)
-	{
-		try (DataInputStream dataInputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(file))))
-		{
-			this.readFrom(dataInputStream);
-			return true;
-		}
-		catch (IOException ex)
-		{
-			ex.printStackTrace();
-			return false;
-		}
 	}
 
 	public void readFrom(DataInput dataInput) throws IOException
 	{
 		final int entries = dataInput.readShort();
 
-		this.mainGroup.getChildren().clear();
 		this.gridElementMap = new HashMap<>(entries);
 
 		for (int i = 0; i < entries; i++)
@@ -76,20 +65,6 @@ public class Grid
 
 			final GridElement gridElement = new GridElement(this, position, instruction);
 			this.gridElementMap.put(position, gridElement);
-		}
-	}
-
-	public boolean writeTo(File file)
-	{
-		try (DataOutputStream dataOutputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file))))
-		{
-			this.writeTo(dataOutputStream);
-			return true;
-		}
-		catch (IOException ex)
-		{
-			ex.printStackTrace();
-			return false;
 		}
 	}
 
