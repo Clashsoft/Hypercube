@@ -1,7 +1,10 @@
 package com.clashsoft.hypercube.input;
 
 import com.clashsoft.hypercube.HypercubeIDE;
-import com.clashsoft.hypercube.instruction.*;
+import com.clashsoft.hypercube.instruction.Instructions;
+import com.clashsoft.hypercube.instruction.LoadInstruction;
+import com.clashsoft.hypercube.instruction.PushInstruction;
+import com.clashsoft.hypercube.instruction.StoreInstruction;
 import com.clashsoft.hypercube.state.Direction;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.KeyEvent;

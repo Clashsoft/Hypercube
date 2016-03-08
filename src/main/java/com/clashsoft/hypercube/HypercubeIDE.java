@@ -74,8 +74,12 @@ public class HypercubeIDE extends Application
 		this.primaryStage = primaryStage;
 
 		primaryStage.setResizable(false);
-
 		primaryStage.setScene(this.createContent());
+
+		primaryStage.setOnCloseRequest(event -> {
+			this.stopExecution();
+			this.save(false);
+		});
 
 		this.setProject(new Project(this, "New Project"));
 
