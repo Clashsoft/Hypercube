@@ -45,7 +45,7 @@ public class HypercubeIDE extends Application
 	private Project project;
 	private File    saveFile;
 
-	private ExecutionThread executionTask;
+	private ExecutionThread executionThread;
 	private InputManager inputManager = new InputManager(this);
 
 	private Stage             primaryStage;
@@ -328,36 +328,36 @@ public class HypercubeIDE extends Application
 
 	public void startExecution()
 	{
-		if (this.executionTask != null)
+		if (this.executionThread != null)
 		{
-			this.executionTask.setPaused(false);
+			this.executionThread.setPaused(false);
 			return;
 		}
 
-		this.executionTask = new ExecutionThread(this, this.project);
-		this.executionTask.run();
+		this.executionThread = new ExecutionThread(this, this.project);
+		this.executionThread.start();
 	}
 
 	public void pauseExecution()
 	{
-		if (this.executionTask != null)
+		if (this.executionThread != null)
 		{
-			this.executionTask.setPaused(true);
+			this.executionThread.setPaused(true);
 		}
 	}
 
 	public void stopExecution()
 	{
-		if (this.executionTask != null)
+		if (this.executionThread != null)
 		{
-			this.executionTask.stopExecution();
-			this.executionTask = null;
+			this.executionThread.stopExecution();
+			this.executionThread = null;
 		}
 	}
 
 	public void onExecutionStopped()
 	{
-		this.executionTask = null;
+		this.executionThread = null;
 		this.setExecutionPosition(this.project.getExecutionStartPosition());
 	}
 

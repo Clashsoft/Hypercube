@@ -8,13 +8,14 @@ import com.clashsoft.hypercube.state.Direction;
 import com.clashsoft.hypercube.state.ExecutionException;
 import com.clashsoft.hypercube.state.ExecutionState;
 import com.clashsoft.hypercube.state.Position;
+import javafx.application.Platform;
 
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-public class ExecutionThread implements ExecutionState
+public class ExecutionThread extends Thread implements ExecutionState
 {
 	private final HypercubeIDE ide;
 	private final Grid         grid;
@@ -25,7 +26,7 @@ public class ExecutionThread implements ExecutionState
 	private Direction           direction = Direction.FORWARD;
 	private Deque<Object>       stack     = new LinkedList<>();
 	private Map<String, Object> variables = new HashMap<>();
-	private Position            position;
+	private Position position;
 
 	public ExecutionThread(HypercubeIDE ide, Project project)
 	{
@@ -101,7 +102,22 @@ public class ExecutionThread implements ExecutionState
 	@Override
 	public String readInput(String prompt)
 	{
-		return this.ide.input(prompt);
+		final String[] reference = new String[1];
+
+		Platform.runLater(() -> reference[0] = this.ide.input(prompt));
+
+		while (reference[0] == null)
+		{
+			try
+			{
+				Thread.sleep(10);
+			}
+			catch (InterruptedException ignored)
+			{
+			}
+		}
+
+		return reference[0];
 	}
 
 	public void run()
@@ -115,6 +131,14 @@ public class ExecutionThread implements ExecutionState
 			if (!this.paused)
 			{
 				this.step();
+			}
+
+			try
+			{
+				Thread.sleep(1000);
+			}
+			catch (InterruptedException ignored)
+			{
 			}
 		}
 
