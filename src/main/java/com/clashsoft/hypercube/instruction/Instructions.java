@@ -35,6 +35,19 @@ public final class Instructions
 	public static Instruction FORWARD  = new DirectionInstruction("Forward", textured("forward"), Direction.FORWARD);
 	public static Instruction BACKWARD = new DirectionInstruction("Backward", textured("backward"), Direction.BACKWARD);
 
+	public static Instruction COMPARE = new BaseInstruction("Compare", textured("cmp"), executionState -> {
+		double number = ((Number) executionState.pop()).doubleValue();
+		if (number < 0)
+		{
+			executionState.setDirection(Direction.DOWN);
+		}
+		else if (number > 0)
+		{
+			executionState.setDirection(Direction.UP);
+		}
+		// else keep direction
+	});
+
 	protected static Material textured(String name)
 	{
 		return TextureLoader.material("instructions", name);

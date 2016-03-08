@@ -34,8 +34,8 @@ public class NumberInstruction implements Instruction
 	@Override
 	public void execute(ExecutionState state) throws ExecutionException
 	{
-		Object left = state.pop();
-		Object right = state.pop();
+		final Object right = state.pop();
+		final Object left = state.pop();
 
 		if (left instanceof Number && right instanceof Number)
 		{
