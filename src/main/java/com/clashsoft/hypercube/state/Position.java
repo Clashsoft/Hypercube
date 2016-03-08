@@ -42,6 +42,21 @@ public class Position
 		dataOutput.writeInt(this.z);
 	}
 
+	public double getDisplayX()
+	{
+		return this.y - this.w * 100;
+	}
+
+	public double getDisplayY()
+	{
+		return -this.z;
+	}
+
+	public double getDisplayZ()
+	{
+		return this.x + this.w * 100;
+	}
+
 	@Override
 	public boolean equals(Object o)
 	{

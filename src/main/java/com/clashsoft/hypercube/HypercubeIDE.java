@@ -60,6 +60,7 @@ public class HypercubeIDE extends Application
 	private Box      executionBox;
 	private TextArea console;
 	private Label    instructionInfo;
+	private Label    positionInfo;
 
 	/**
 	 * Java main for when running without JavaFX launcher
@@ -121,9 +122,13 @@ public class HypercubeIDE extends Application
 		this.console.setMaxHeight(WINDOW_HEIGHT - 100);
 		this.console.setEditable(false);
 
-		this.instructionInfo = new Label("<empty>");
+		this.positionInfo = new Label();
+		this.positionInfo.setTranslateX(20);
+		this.positionInfo.setTranslateY(20);
+
+		this.instructionInfo = new Label();
 		this.instructionInfo.setTranslateX(20);
-		this.instructionInfo.setTranslateY(20);
+		this.instructionInfo.setTranslateY(40);
 
 		final Button saveButton = new Button("Save");
 		saveButton.setTranslateX(20);
@@ -155,7 +160,7 @@ public class HypercubeIDE extends Application
 
 		final Group ui = new Group();
 		ui.getChildren().addAll(saveButton, openButton, newButton, startButton, pauseButton, stopButton, this.console,
-		                        this.instructionInfo);
+		                        this.positionInfo, this.instructionInfo);
 		return ui;
 	}
 
@@ -310,7 +315,7 @@ public class HypercubeIDE extends Application
 	public void setProject(Project project)
 	{
 		this.project = project;
-		this.primaryStage.setTitle(project.getName() + " - Hypercube IDE");
+		this.primaryStage.setTitle(project.getName() + " – Hypercube IDE");
 
 		this.loadProject(project);
 	}
@@ -368,36 +373,40 @@ public class HypercubeIDE extends Application
 
 		final GridElement element = this.project.getGrid().createElement(position);
 
-		this.camera.setTranslateX(position.x);
-		this.camera.setTranslateY(position.y);
-		this.camera.setTranslateZ(position.z);
+		this.camera.setTranslateX(position.getDisplayX());
+		this.camera.setTranslateY(position.getDisplayY());
+		this.camera.setTranslateZ(position.getDisplayZ());
 
-		this.selectedBox.setTranslateX(position.x);
-		this.selectedBox.setTranslateY(position.y);
-		this.selectedBox.setTranslateZ(position.z);
+		this.selectedBox.setTranslateX(position.getDisplayX());
+		this.selectedBox.setTranslateY(position.getDisplayY());
+		this.selectedBox.setTranslateZ(position.getDisplayZ());
 
 		this.updateInstructionDesc(element);
 	}
 
 	public void updateInstructionDesc(GridElement element)
 	{
-		Instruction instruction = element.getInstruction();
+		final Position position = element.position;
 
+		this.positionInfo.setText(
+			String.format("Position:\t\tw: %d x: %d y: %d z: %d", position.w, position.x, position.y, position.z));
+
+		final Instruction instruction = element.getInstruction();
 		if (instruction != null)
 		{
-			this.instructionInfo.setText(instruction.getDescription());
+			this.instructionInfo.setText("Instruction:\t" + instruction.getDescription());
 		}
 		else
 		{
-			this.instructionInfo.setText("<empty>");
+			this.instructionInfo.setText("Instruction:\t<empty>");
 		}
 	}
 
 	public void setExecutionPosition(Position position)
 	{
-		this.executionBox.setTranslateX(position.x);
-		this.executionBox.setTranslateY(position.y);
-		this.executionBox.setTranslateZ(position.z);
+		this.executionBox.setTranslateX(position.getDisplayX());
+		this.executionBox.setTranslateY(position.getDisplayY());
+		this.executionBox.setTranslateZ(position.getDisplayZ());
 	}
 
 	public void loadProject(Project project)

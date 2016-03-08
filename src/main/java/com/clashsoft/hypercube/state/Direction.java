@@ -2,12 +2,12 @@ package com.clashsoft.hypercube.state;
 
 public enum Direction
 {
-	FORWARD(0, 0, 0, 1),
-	BACKWARD(0, 0, 0, -1),
-	LEFT(0, -1, 0, 0),
-	RIGHT(0, 1, 0, 0),
-	UP(0, 0, -1, 0),
-	DOWN(0, 0, 1, 0),
+	FORWARD(0, 1, 0, 0),
+	BACKWARD(0, -1, 0, 0),
+	LEFT(0, 0, -1, 0),
+	RIGHT(0, 0, 1, 0),
+	UP(0, 0, 0, 1),
+	DOWN(0, 0, 0, -1),
 	NIM(1, 0, 0, 0),
 	BOR(-1, 0, 0, 0);
 

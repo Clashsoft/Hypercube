@@ -39,6 +39,12 @@ public class InputManager
 		case PAGE_DOWN:
 			this.ide.offsetPosition(Direction.DOWN);
 			return;
+		case HOME:
+			this.ide.offsetPosition(Direction.NIM);
+			return;
+		case END:
+			this.ide.offsetPosition(Direction.BOR);
+			return;
 		case DELETE:
 		case BACK_SPACE:
 			this.ide.setInstruction(null);

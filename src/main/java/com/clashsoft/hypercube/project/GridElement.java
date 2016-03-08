@@ -26,9 +26,10 @@ public class GridElement
 		this.position = position;
 
 		final Box renderBox = new Box(1, 1, 1);
-		renderBox.setTranslateX(this.position.x);
-		renderBox.setTranslateY(this.position.y);
-		renderBox.setTranslateZ(this.position.z);
+
+		renderBox.setTranslateX(this.position.getDisplayX());
+		renderBox.setTranslateY(this.position.getDisplayY());
+		renderBox.setTranslateZ(this.position.getDisplayZ());
 
 		grid.mainGroup.getChildren().add(renderBox);
 
