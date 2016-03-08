@@ -15,6 +15,7 @@ public class Project
 	private final Grid         grid;
 
 	private Position selectedPosition = new Position(0, 0, 0, 0);
+	private Position executionStartPosition = new Position(0, 0, 0, 0);
 
 	public Project(HypercubeIDE ide, String name)
 	{
@@ -48,6 +49,16 @@ public class Project
 	public void setSelectedPosition(Position selectedPosition)
 	{
 		this.selectedPosition = selectedPosition;
+	}
+
+	public Position getExecutionStartPosition()
+	{
+		return this.executionStartPosition;
+	}
+
+	public void setExecutionStartPosition(Position executionStartPosition)
+	{
+		this.executionStartPosition = executionStartPosition;
 	}
 
 	public boolean readFrom(File file)
@@ -87,6 +98,7 @@ public class Project
 		this.grid.readFrom(dataInput);
 
 		this.selectedPosition = Position.readFrom(dataInput);
+		this.executionStartPosition = Position.readFrom(dataInput);
 	}
 
 	private void writeTo(DataOutput dataOutput) throws IOException
@@ -96,5 +108,6 @@ public class Project
 		this.grid.writeTo(dataOutput);
 
 		this.selectedPosition.writeTo(dataOutput);
+		this.executionStartPosition.writeTo(dataOutput);
 	}
 }

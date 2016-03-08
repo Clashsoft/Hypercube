@@ -37,6 +37,10 @@ public class GridElement
 			{
 				grid.project.getIDE().selectPosition(position);
 			}
+			else if (event.getButton() == MouseButton.MIDDLE)
+			{
+				grid.project.getIDE().setExecutionStartPosition(position);
+			}
 		});
 
 		grid.mainGroup.getChildren().add(renderBox);

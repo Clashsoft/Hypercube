@@ -52,12 +52,13 @@ public class HypercubeIDE extends Application
 	private SubScene          subScene;
 	private PerspectiveCamera camera;
 	private Group             gridGroup;
-	private Box               selectedBox;
 
-	private Box       executionBox;
-	private TextArea  console;
-	private Label     instructionInfo;
-	private Label     positionInfo;
+	private Box selectedBox;
+	private Box executionBox;
+
+	private TextArea console;
+	private Label    instructionInfo;
+	private Label    positionInfo;
 
 	/**
 	 * Java main for when running without JavaFX launcher
@@ -356,7 +357,7 @@ public class HypercubeIDE extends Application
 	public void onExecutionStopped()
 	{
 		this.executionTask = null;
-		this.setExecutionPosition(new Position(0, 0, 0, 0));
+		this.setExecutionPosition(this.project.getExecutionStartPosition());
 	}
 
 	public void setInstruction(Instruction instruction)
@@ -406,6 +407,12 @@ public class HypercubeIDE extends Application
 		}
 	}
 
+	public void setExecutionStartPosition(Position position)
+	{
+		this.project.setExecutionStartPosition(position);
+		this.setExecutionPosition(position);
+	}
+
 	public void setExecutionPosition(Position position)
 	{
 		this.executionBox.setTranslateX(position.getDisplayX());
@@ -416,6 +423,7 @@ public class HypercubeIDE extends Application
 	public void loadProject(Project project)
 	{
 		this.selectPosition(project.getSelectedPosition());
+		this.setExecutionPosition(project.getExecutionStartPosition());
 
 		ObservableList<Node> children = this.gridGroup.getChildren();
 		children.clear();

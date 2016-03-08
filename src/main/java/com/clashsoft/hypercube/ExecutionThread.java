@@ -25,11 +25,12 @@ public class ExecutionThread implements ExecutionState
 	private Direction           direction = Direction.FORWARD;
 	private Deque<Object>       stack     = new LinkedList<>();
 	private Map<String, Object> variables = new HashMap<>();
-	private Position            position  = new Position(0, 0, 0, 0);
+	private Position            position;
 
 	public ExecutionThread(HypercubeIDE ide, Project project)
 	{
 		this.ide = ide;
+		this.position = project.getExecutionStartPosition();
 		this.grid = project.getGrid();
 	}
 
