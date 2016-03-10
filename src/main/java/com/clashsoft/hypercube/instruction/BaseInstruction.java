@@ -2,6 +2,7 @@ package com.clashsoft.hypercube.instruction;
 
 import com.clashsoft.hypercube.state.ExecutionException;
 import com.clashsoft.hypercube.state.ExecutionState;
+import com.clashsoft.hypercube.util.I18n;
 import javafx.scene.paint.Material;
 
 import java.io.DataInput;
@@ -42,7 +43,7 @@ public class BaseInstruction implements Instruction
 	@Override
 	public String getDescription()
 	{
-		return this.description;
+		return I18n.getString(this.description);
 	}
 
 	@Override

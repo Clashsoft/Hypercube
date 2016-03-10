@@ -6,6 +6,7 @@ import com.clashsoft.hypercube.project.GridElement;
 import com.clashsoft.hypercube.project.Project;
 import com.clashsoft.hypercube.state.Direction;
 import com.clashsoft.hypercube.state.Position;
+import com.clashsoft.hypercube.util.I18n;
 import com.clashsoft.hypercube.util.TextureLoader;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -39,8 +40,8 @@ public class HypercubeIDE extends Application
 	public static final PhongMaterial EXECUTION_MATERIAL = new PhongMaterial(Color.rgb(0, 0xFF, 0, 0.5));
 
 	public static final String          FILE_EXTENSION   = ".hcp";
-	public static final ExtensionFilter EXTENSION_FILTER = new ExtensionFilter("Hypercube Project Files (*"
-		                                                                           + FILE_EXTENSION + ")", "*" + FILE_EXTENSION);
+	public static final ExtensionFilter EXTENSION_FILTER = new ExtensionFilter(I18n.getString(
+		"file.extension.desc", FILE_EXTENSION), "*" + FILE_EXTENSION);
 
 	private Project project;
 	private File    saveFile;
@@ -81,7 +82,7 @@ public class HypercubeIDE extends Application
 			this.save(false);
 		});
 
-		this.setProject(new Project(this, "New Project"));
+		this.setProject(new Project(this, I18n.getString("project.new.name")));
 
 		primaryStage.show();
 	}
@@ -100,10 +101,10 @@ public class HypercubeIDE extends Application
 
 	private Group createUI()
 	{
-		final Button saveButton = new Button("Save");
+		final Button saveButton = new Button(I18n.getString("button.save.text"));
 		saveButton.setTranslateX(20);
 		saveButton.setTranslateY(20);
-		saveButton.setTooltip(new Tooltip("Save the current Project to disk (Shift-Click to Save As)"));
+		saveButton.setTooltip(new Tooltip(I18n.getString("button.save.tooltip")));
 		saveButton.setOnMouseClicked(event -> {
 			if (event.getButton() == MouseButton.PRIMARY)
 			{
@@ -111,16 +112,16 @@ public class HypercubeIDE extends Application
 			}
 		});
 
-		final Button openButton = new Button("Open");
-		openButton.setTranslateX(80);
-		openButton.setTranslateY(20);
-		openButton.setTooltip(new Tooltip("Open a Project from a file on disk"));
+		final Button openButton = new Button(I18n.getString("button.open.text"));
+		openButton.setTranslateX(20);
+		openButton.setTranslateY(50);
+		openButton.setTooltip(new Tooltip(I18n.getString("button.open.tooltip")));
 		openButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, this::open));
 
-		final Button newButton = new Button("New");
-		newButton.setTranslateX(140);
-		newButton.setTranslateY(20);
-		newButton.setTooltip(new Tooltip("Create a new Project"));
+		final Button newButton = new Button(I18n.getString("button.new.text"));
+		newButton.setTranslateX(20);
+		newButton.setTranslateY(80);
+		newButton.setTooltip(new Tooltip(I18n.getString("button.new.tooltip")));
 		newButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, this::newProject));
 
 		final ImageView startButton = uiButton("start");
@@ -138,15 +139,17 @@ public class HypercubeIDE extends Application
 		stopButton.setY(20);
 		stopButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, this::stopExecution));
 
-		final Button clearButton = new Button("Clear");
-		clearButton.setTranslateX(WINDOW_WIDTH - 130);
-		clearButton.setTranslateY(24);
-		clearButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, () -> this.console.setText("")));
-
-		final ToggleButton hideButton = new ToggleButton("Hide");
-		hideButton.setTranslateX(WINDOW_WIDTH - 75);
+		final ToggleButton hideButton = new ToggleButton(I18n.getString("button.hide.text"));
+		hideButton.setTranslateX(WINDOW_WIDTH - 130);
 		hideButton.setTranslateY(24);
+		hideButton.setTooltip(new Tooltip(I18n.getString("button.hide.tooltip")));
 		hideButton.setOnAction(event -> this.console.setVisible(!hideButton.isSelected()));
+
+		final Button clearButton = new Button(I18n.getString("button.clear.text"));
+		clearButton.setTranslateX(WINDOW_WIDTH - 80);
+		clearButton.setTranslateY(24);
+		clearButton.setTooltip(new Tooltip(I18n.getString("button.clear.tooltip")));
+		clearButton.setOnMouseClicked(mouseHandler(MouseButton.PRIMARY, () -> this.console.setText("")));
 
 		this.console = new TextArea();
 		this.console.setTranslateX(WINDOW_WIDTH - 260);
@@ -207,7 +210,7 @@ public class HypercubeIDE extends Application
 		// Build the Scene Graph
 		final Group sceneGroup = new Group();
 		sceneGroup.getChildren()
-		          .addAll(this.gridGroup, this.selectedBox, this.executionBox, xAxis, yAxis, zAxis, this.camera);
+		          .addAll(this.gridGroup, this.executionBox, this.selectedBox, xAxis, yAxis, zAxis, this.camera);
 		sceneGroup.setCursor(Cursor.OPEN_HAND);
 
 		// Use a SubScene
@@ -249,7 +252,7 @@ public class HypercubeIDE extends Application
 		if (saveAs || this.saveFile == null)
 		{
 			final FileChooser fileChooser = new FileChooser();
-			fileChooser.setTitle("Save Project");
+			fileChooser.setTitle(I18n.getString("dialog.save.title"));
 			this.setupFileChooser(fileChooser);
 
 			target = fileChooser.showSaveDialog(this.primaryStage);
@@ -271,7 +274,7 @@ public class HypercubeIDE extends Application
 	public void open()
 	{
 		final FileChooser fileChooser = new FileChooser();
-		fileChooser.setTitle("Open Project");
+		fileChooser.setTitle(I18n.getString("dialog.open.title"));
 
 		this.setupFileChooser(fileChooser);
 
@@ -312,7 +315,7 @@ public class HypercubeIDE extends Application
 	{
 		this.saveFile = null;
 
-		final String name = this.inputManager.inputText("New Project", "Enter Project Name");
+		final String name = this.inputManager.inputText(I18n.getString("dialog.newproject.title"), I18n.getString("dialog.newproject.info"));
 		if (name == null) // Clicked Cancel
 		{
 			return;
@@ -325,7 +328,7 @@ public class HypercubeIDE extends Application
 	public void setProject(Project project)
 	{
 		this.project = project;
-		this.primaryStage.setTitle(project.getName() + " – Hypercube IDE");
+		this.primaryStage.setTitle(I18n.getString("ide.title", project.getName()));
 
 		this.loadProject(project);
 	}
@@ -399,16 +402,16 @@ public class HypercubeIDE extends Application
 		final Position position = element.position;
 
 		this.positionInfo.setText(
-			String.format("Position:\t\tw: %d x: %d y: %d z: %d", position.w, position.x, position.y, position.z));
+			String.format("%s:\t\tw: %d x: %d y: %d z: %d", I18n.getString("label.position"), position.w, position.x, position.y, position.z));
 
 		final Instruction instruction = element.getInstruction();
 		if (instruction != null)
 		{
-			this.instructionInfo.setText("Instruction:\t" + instruction.getDescription());
+			this.instructionInfo.setText(I18n.getString("label.instruction") + ":\t" + instruction.getDescription());
 		}
 		else
 		{
-			this.instructionInfo.setText("Instruction:\t<empty>");
+			this.instructionInfo.setText(I18n.getString("label.instruction") + ":\t" + I18n.getString("label.instruction.empty"));
 		}
 	}
 
@@ -442,7 +445,7 @@ public class HypercubeIDE extends Application
 
 	public String input(String prompt)
 	{
-		return this.inputManager.inputText("Input", prompt);
+		return this.inputManager.inputText(I18n.getString("dialog.input.title"), prompt);
 	}
 
 	private static EventHandler<MouseEvent> mouseHandler(MouseButton button, Runnable runnable)

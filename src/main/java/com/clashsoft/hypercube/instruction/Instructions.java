@@ -3,6 +3,7 @@ package com.clashsoft.hypercube.instruction;
 import com.clashsoft.hypercube.state.Direction;
 import com.clashsoft.hypercube.state.ExecutionException;
 import com.clashsoft.hypercube.state.ExecutionState;
+import com.clashsoft.hypercube.util.I18n;
 import com.clashsoft.hypercube.util.TextureLoader;
 import javafx.scene.paint.Material;
 
@@ -40,18 +41,18 @@ public final class Instructions
 	private static final byte FORWARD_ID  = 36;
 	private static final byte BACKWARD_ID = 37;
 
-	public static Instruction ADD      = new NumberInstruction(ADD_ID, "Add", textured("add"),
+	public static Instruction ADD      = new NumberInstruction(ADD_ID, "instruction.add", textured("add"),
 	                                                           (n1, n2) -> n1.doubleValue() + n2.doubleValue());
-	public static Instruction SUBTRACT = new NumberInstruction(SUBTRACT_ID, "Subtract", textured("subtract"),
+	public static Instruction SUBTRACT = new NumberInstruction(SUBTRACT_ID, "instruction.subtract", textured("subtract"),
 	                                                           (n1, n2) -> n1.doubleValue() - n2.doubleValue());
-	public static Instruction MULTIPLY = new NumberInstruction(MULTIPLY_ID, "Multiply", textured("multiply"),
+	public static Instruction MULTIPLY = new NumberInstruction(MULTIPLY_ID, "instruction.multiply", textured("multiply"),
 	                                                           (n1, n2) -> n1.doubleValue() * n2.doubleValue());
-	public static Instruction DIVIDE   = new NumberInstruction(DIVIDE_ID, "Divide", textured("divide"),
+	public static Instruction DIVIDE   = new NumberInstruction(DIVIDE_ID, "instruction.divide", textured("divide"),
 	                                                           (n1, n2) -> n1.doubleValue() / n2.doubleValue());
-	public static Instruction MODULO   = new NumberInstruction(MODULO_ID, "Modulo", textured("modulo"),
+	public static Instruction MODULO   = new NumberInstruction(MODULO_ID, "instruction.modulo", textured("modulo"),
 	                                                           (n1, n2) -> n1.doubleValue() % n2.doubleValue());
 
-	public static Instruction OUTPUT = new BaseInstruction(OUTPUT_ID, "Output", textured("print"), //
+	public static Instruction OUTPUT = new BaseInstruction(OUTPUT_ID, "instruction.output", textured("print"), //
 	                                                       executionState -> executionState.print(
 		                                                       String.valueOf(executionState.pop())));
 
@@ -61,8 +62,8 @@ public final class Instructions
 
 	static
 	{
-		INPUT_TEXT = new BaseInstruction(INPUT_TEXT_ID, "Input Text", textured("read_text"), executionState -> {
-			final String input = executionState.readInput("Input Text");
+		INPUT_TEXT = new BaseInstruction(INPUT_TEXT_ID, "instruction.input.text", textured("read_text"), executionState -> {
+			final String input = executionState.readInput(I18n.getString("instruction.input.text"));
 			if (input == null)
 			{
 				throw new ExecutionException("Text Input Cancelled");
@@ -71,8 +72,8 @@ public final class Instructions
 			executionState.push(input);
 		});
 
-		INPUT_NUMBER = new BaseInstruction(INPUT_NUMBER_ID, "Input Number", textured("read_num"), executionState -> {
-			final String input = executionState.readInput("Input Number");
+		INPUT_NUMBER = new BaseInstruction(INPUT_NUMBER_ID, "instruction.input.number", textured("read_num"), executionState -> {
+			final String input = executionState.readInput(I18n.getString("instruction.input.number"));
 			if (input == null)
 			{
 				throw new ExecutionException("Number Input Cancelled");
@@ -90,25 +91,25 @@ public final class Instructions
 		});
 	}
 
-	public static Instruction POP = new BaseInstruction(POP_ID, "Pop", textured("pop"), ExecutionState::pop);
+	public static Instruction POP = new BaseInstruction(POP_ID, "instruction.pop", textured("pop"), ExecutionState::pop);
 
-	public static Instruction DUP = new BaseInstruction(DUP_ID, "Duplicate", textured("dup"), executionState -> {
+	public static Instruction DUP = new BaseInstruction(DUP_ID, "instruction.dup", textured("dup"), executionState -> {
 		Object top = executionState.pop();
 		executionState.push(top);
 		executionState.push(top);
 	});
 
-	public static Instruction UP       = new DirectionInstruction(UP_ID, "Up", textured("up"), Direction.UP);
-	public static Instruction DOWN     = new DirectionInstruction(DOWN_ID, "Down", textured("down"), Direction.DOWN);
-	public static Instruction RIGHT    = new DirectionInstruction(RIGHT_ID, "Right", textured("right"),
+	public static Instruction UP       = new DirectionInstruction(UP_ID, "instruction.up", textured("up"), Direction.UP);
+	public static Instruction DOWN     = new DirectionInstruction(DOWN_ID, "instruction.down", textured("down"), Direction.DOWN);
+	public static Instruction RIGHT    = new DirectionInstruction(RIGHT_ID, "instruction.right", textured("right"),
 	                                                              Direction.RIGHT);
-	public static Instruction LEFT     = new DirectionInstruction(LEFT_ID, "Left", textured("left"), Direction.LEFT);
-	public static Instruction FORWARD  = new DirectionInstruction(FORWARD_ID, "Forward", textured("forward"),
+	public static Instruction LEFT     = new DirectionInstruction(LEFT_ID, "instruction.left", textured("left"), Direction.LEFT);
+	public static Instruction FORWARD  = new DirectionInstruction(FORWARD_ID, "instruction.forward", textured("forward"),
 	                                                              Direction.FORWARD);
-	public static Instruction BACKWARD = new DirectionInstruction(BACKWARD_ID, "Backward", textured("backward"),
+	public static Instruction BACKWARD = new DirectionInstruction(BACKWARD_ID, "instruction.backward", textured("backward"),
 	                                                              Direction.BACKWARD);
 
-	public static Instruction COMPARE = new BaseInstruction(COMPARE_ID, "Compare", textured("cmp"), executionState -> {
+	public static Instruction COMPARE = new BaseInstruction(COMPARE_ID, "instruction.compare", textured("cmp"), executionState -> {
 		double number = ((Number) executionState.pop()).doubleValue();
 		if (number < 0)
 		{

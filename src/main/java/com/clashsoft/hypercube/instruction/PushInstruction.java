@@ -2,6 +2,7 @@ package com.clashsoft.hypercube.instruction;
 
 import com.clashsoft.hypercube.state.ExecutionException;
 import com.clashsoft.hypercube.state.ExecutionState;
+import com.clashsoft.hypercube.util.I18n;
 import javafx.scene.paint.Material;
 
 import java.io.DataInput;
@@ -90,7 +91,7 @@ public class PushInstruction implements Instruction
 	@Override
 	public String getDescription()
 	{
-		return "Push " + this.value;
+		return I18n.getString("instruction.push.desc", this.value);
 	}
 
 	@Override

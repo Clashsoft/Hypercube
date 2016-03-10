@@ -8,6 +8,7 @@ import com.clashsoft.hypercube.state.Direction;
 import com.clashsoft.hypercube.state.ExecutionException;
 import com.clashsoft.hypercube.state.ExecutionState;
 import com.clashsoft.hypercube.state.Position;
+import com.clashsoft.hypercube.util.I18n;
 import javafx.application.Platform;
 
 import java.util.Deque;
@@ -122,7 +123,7 @@ public class ExecutionThread extends Thread implements ExecutionState
 
 	public void run()
 	{
-		this.print("Starting Execution...");
+		this.print(I18n.getString("execution.start"));
 		this.running = true;
 		this.paused = false;
 
@@ -143,7 +144,7 @@ public class ExecutionThread extends Thread implements ExecutionState
 		}
 
 		this.ide.onExecutionStopped();
-		this.print("Stopping Execution.");
+		this.print(I18n.getString("execution.stop"));
 	}
 
 	private void step()

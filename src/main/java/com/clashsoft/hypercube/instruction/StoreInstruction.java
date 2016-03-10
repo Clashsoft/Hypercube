@@ -2,6 +2,7 @@ package com.clashsoft.hypercube.instruction;
 
 import com.clashsoft.hypercube.state.ExecutionException;
 import com.clashsoft.hypercube.state.ExecutionState;
+import com.clashsoft.hypercube.util.I18n;
 import javafx.scene.paint.Material;
 
 import java.io.DataInput;
@@ -50,7 +51,7 @@ public class StoreInstruction implements Instruction
 	@Override
 	public String getDescription()
 	{
-		return "Store '" + this.varName + '\'';
+		return I18n.getString("instruction.store.desc", this.varName);
 	}
 
 	@Override

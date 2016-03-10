@@ -6,6 +6,7 @@ import com.clashsoft.hypercube.instruction.LoadInstruction;
 import com.clashsoft.hypercube.instruction.PushInstruction;
 import com.clashsoft.hypercube.instruction.StoreInstruction;
 import com.clashsoft.hypercube.state.Direction;
+import com.clashsoft.hypercube.util.I18n;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.KeyEvent;
 
@@ -91,7 +92,8 @@ public class InputManager
 			return;
 		case N:
 		{
-			final String input = this.inputText("Push Number", "Enter a Number");
+			final String input = this.inputText(I18n.getString("instruction.push.number.title"),
+			                                    I18n.getString("instruction.push.number.info"));
 			try
 			{
 				this.ide.setInstruction(new PushInstruction(Double.valueOf(input)));
@@ -102,13 +104,16 @@ public class InputManager
 			return;
 		}
 		case T:
-			this.ide.setInstruction(new PushInstruction(this.inputText("Push Text", "Enter Text")));
+			this.ide.setInstruction(new PushInstruction(this.inputText(I18n.getString("instruction.push.text.title"),
+			                                                           I18n.getString("instruction.push.text.info"))));
 			return;
 		case K:
-			this.ide.setInstruction(new StoreInstruction(this.inputText("Store Variable", "Enter Variable Name")));
+			this.ide.setInstruction(new StoreInstruction(this.inputText(I18n.getString("instruction.store.title"),
+			                                                            I18n.getString("instruction.store.info"))));
 			return;
 		case L:
-			this.ide.setInstruction(new LoadInstruction(this.inputText("Load Variable", "Enter Variable Name")));
+			this.ide.setInstruction(new LoadInstruction(this.inputText(I18n.getString("instruction.load.title"),
+			                                                           I18n.getString("instruction.load.info"))));
 			return;
 		case O:
 			this.ide.setInstruction(Instructions.OUTPUT);

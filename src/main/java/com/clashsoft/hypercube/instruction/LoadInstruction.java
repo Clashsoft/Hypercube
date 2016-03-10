@@ -2,6 +2,7 @@ package com.clashsoft.hypercube.instruction;
 
 import com.clashsoft.hypercube.state.ExecutionException;
 import com.clashsoft.hypercube.state.ExecutionState;
+import com.clashsoft.hypercube.util.I18n;
 import javafx.scene.paint.Material;
 
 import java.io.DataInput;
@@ -50,7 +51,7 @@ public class LoadInstruction implements Instruction
 	@Override
 	public String getDescription()
 	{
-		return "Load '" + this.varName + '\'';
+		return I18n.getString("instruction.load.desc", this.varName);
 	}
 
 	@Override
