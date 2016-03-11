@@ -63,16 +63,16 @@ public class InputManager
 		switch (event.getCode())
 		{
 		case UP:
-			this.ide.offsetPosition(Direction.FORWARD);
+			this.ide.offsetPosition(Direction.NORTH);
 			return;
 		case DOWN:
-			this.ide.offsetPosition(Direction.BACKWARD);
+			this.ide.offsetPosition(Direction.SOUTH);
 			return;
 		case LEFT:
-			this.ide.offsetPosition(Direction.LEFT);
+			this.ide.offsetPosition(Direction.WEST);
 			return;
 		case RIGHT:
-			this.ide.offsetPosition(Direction.RIGHT);
+			this.ide.offsetPosition(Direction.EAST);
 			return;
 		case PAGE_UP:
 			this.ide.offsetPosition(Direction.UP);

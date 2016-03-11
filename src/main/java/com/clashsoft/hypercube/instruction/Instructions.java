@@ -101,13 +101,13 @@ public final class Instructions
 
 	public static Instruction UP       = new DirectionInstruction(UP_ID, "instruction.up", textured("up"), Direction.UP);
 	public static Instruction DOWN     = new DirectionInstruction(DOWN_ID, "instruction.down", textured("down"), Direction.DOWN);
-	public static Instruction RIGHT    = new DirectionInstruction(RIGHT_ID, "instruction.right", textured("right"),
-	                                                              Direction.RIGHT);
-	public static Instruction LEFT     = new DirectionInstruction(LEFT_ID, "instruction.left", textured("left"), Direction.LEFT);
-	public static Instruction FORWARD  = new DirectionInstruction(FORWARD_ID, "instruction.forward", textured("forward"),
-	                                                              Direction.FORWARD);
-	public static Instruction BACKWARD = new DirectionInstruction(BACKWARD_ID, "instruction.backward", textured("backward"),
-	                                                              Direction.BACKWARD);
+	public static Instruction RIGHT    = new DirectionInstruction(RIGHT_ID, "instruction.east", textured("east"),
+	                                                              Direction.EAST);
+	public static Instruction LEFT     = new DirectionInstruction(LEFT_ID, "instruction.west", textured("west"), Direction.WEST);
+	public static Instruction FORWARD  = new DirectionInstruction(FORWARD_ID, "instruction.north", textured("north"),
+	                                                              Direction.NORTH);
+	public static Instruction BACKWARD = new DirectionInstruction(BACKWARD_ID, "instruction.south", textured("south"),
+	                                                              Direction.SOUTH);
 
 	public static Instruction COMPARE = new BaseInstruction(COMPARE_ID, "instruction.compare", textured("cmp"), executionState -> {
 		double number = ((Number) executionState.pop()).doubleValue();

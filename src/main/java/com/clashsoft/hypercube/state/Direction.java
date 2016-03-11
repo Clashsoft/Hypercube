@@ -2,10 +2,10 @@ package com.clashsoft.hypercube.state;
 
 public enum Direction
 {
-	FORWARD(0, 1, 0, 0),
-	BACKWARD(0, -1, 0, 0),
-	LEFT(0, 0, -1, 0),
-	RIGHT(0, 0, 1, 0),
+	NORTH(0, 1, 0, 0),
+	SOUTH(0, -1, 0, 0),
+	WEST(0, 0, -1, 0),
+	EAST(0, 0, 1, 0),
 	UP(0, 0, 0, 1),
 	DOWN(0, 0, 0, -1),
 	NIM(1, 0, 0, 0),

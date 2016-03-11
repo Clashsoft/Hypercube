@@ -24,7 +24,7 @@ public class ExecutionThread extends Thread implements ExecutionState
 	private volatile boolean paused;
 	private volatile boolean running;
 
-	private Direction           direction = Direction.FORWARD;
+	private Direction           direction = Direction.NORTH;
 	private Deque<Object>       stack     = new LinkedList<>();
 	private Map<String, Object> variables = new HashMap<>();
 	private Position position;
