@@ -8,8 +8,8 @@ public enum Direction
 	EAST(0, 0, 1, 0),
 	UP(0, 0, 0, 1),
 	DOWN(0, 0, 0, -1),
-	NIM(1, 0, 0, 0),
-	BOR(-1, 0, 0, 0);
+	ATA(1, 0, 0, 0),
+	KANA(-1, 0, 0, 0);
 
 	public final int deltaW;
 	public final int deltaX;

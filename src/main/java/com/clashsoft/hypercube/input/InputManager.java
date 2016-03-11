@@ -81,10 +81,10 @@ public class InputManager
 			this.ide.offsetPosition(Direction.DOWN);
 			return;
 		case HOME:
-			this.ide.offsetPosition(Direction.NIM);
+			this.ide.offsetPosition(Direction.ATA);
 			return;
 		case END:
-			this.ide.offsetPosition(Direction.BOR);
+			this.ide.offsetPosition(Direction.KANA);
 			return;
 		case DELETE:
 		case BACK_SPACE:
