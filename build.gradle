@@ -16,6 +16,8 @@ dependencies {
 	runtime files("src/main/resources")
 }
 
+jar.manifest.attributes 'Main-Class': 'com.clashsoft.hypercube.HypercubeIDE'
+
 sourceSets {
 	main {
 		java {
