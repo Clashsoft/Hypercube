@@ -5,8 +5,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Material;
 import javafx.scene.paint.PhongMaterial;
 
-import java.io.File;
-
 public final class TextureLoader
 {
 	public static Material material(String domain, String imageSource)
@@ -20,7 +18,7 @@ public final class TextureLoader
 	{
 		try
 		{
-			return new Image(domain + File.separator + imageSource + ".png");
+			return new Image(domain + '/' + imageSource + ".png");
 		}
 		catch (Exception ex)
 		{
